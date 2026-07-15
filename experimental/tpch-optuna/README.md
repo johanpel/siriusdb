@@ -60,7 +60,9 @@ setsid nohup pixi run python experimental/tpch-optuna/tune.py \
 
 Useful flags: `--study-name` (override per-machine default), `--spill-dir`
 (disk-spill dir for downgrades; default `<workdir>/disk_spill` — point at a fast
-NVMe), `--queries 1,3,6-10`, `--iterations`, `--timeout-mult`.
+NVMe), `--queries 1,3,6-10`, `--iterations`, `--timeout-mult`, `--no-warmup`
+(skip priming the OS page cache; warmup is on by default so early trials aren't
+penalized by cold-disk reads).
 
 Study DB: `experimental/tpch-optuna/runs/<study-name>.db` (SQLite, resumable —
 re-run the same command to continue). Trial 0 is the in-source default config

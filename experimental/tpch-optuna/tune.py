@@ -271,6 +271,26 @@ def build_view_sql(parquet_dir: Path) -> str:
     return "\n".join(stmts) + "\n"
 
 
+def prime_os_cache(parquet_dir: Path) -> int:
+    """Read every parquet file once to warm the OS page cache before the study,
+    so the first measured trials aren't penalized by cold-disk reads relative to
+    later ones (by which point the data is already resident). Returns bytes read.
+    Note: only fully effective when the dataset fits in RAM."""
+    files = []
+    for table in TPCH_TABLES:
+        for pat in (f"{table}.parquet", f"{table}_*.parquet", f"{table}/*.parquet"):
+            files.extend(glob.glob(str(parquet_dir / pat)))
+    total = 0
+    for f in files:
+        try:
+            with open(f, "rb", buffering=0) as fh:
+                while chunk := fh.read(16 * 1024 * 1024):
+                    total += len(chunk)
+        except OSError:
+            pass
+    return total
+
+
 def build_sql(p: dict, view_sql: str, query_dir: Path, iterations: int, queries: list[int]) -> str:
     parts = [view_sql, ".timer on\n"]
     for q in queries:
@@ -357,6 +377,10 @@ def main() -> int:
                     help="disk-spill dir for downgrades (default: <workdir>/disk_spill)")
     ap.add_argument("--timeout-mult", type=float, default=4.0,
                     help="per-trial timeout = timeout-mult x best-so-far seconds")
+    ap.add_argument("--warmup", action=argparse.BooleanOptionalAction, default=True,
+                    help="read the dataset once to warm the OS page cache before the "
+                         "study, so early trials aren't penalized by cold-disk reads "
+                         "(--no-warmup to skip)")
     args = ap.parse_args()
 
     def parse_queries(spec: str) -> list[int]:
@@ -394,6 +418,12 @@ def main() -> int:
         return 1
 
     view_sql = build_view_sql(parquet_dir)
+
+    if args.warmup:
+        t0 = time.time()
+        n = prime_os_cache(parquet_dir)
+        print(f"warmup: primed OS page cache with {n / GiB:.1f} GB "
+              f"in {time.time() - t0:.0f}s")
 
     storage = f"sqlite:///{workdir / (study_name + '.db')}"
     study = optuna.create_study(
