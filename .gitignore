@@ -19,6 +19,9 @@ dbgen/
 test_datasets/tpch-dbgen/
 test_datasets/tpch-mod-dbgen/
 test_datasets/hits_0.parquet
+test_datasets/tpch_parquet_sf*/
+test_datasets/tpchgen-rs/
+test/tpch_performance/output/
 .claude/*
 .codex/
 runs/

@@ -131,3 +131,7 @@ duckdb-python = ["duckdb-python"]
 vcpkg = ["vcpkg", "cuda13"]
 vcpkg-cuda12 = ["vcpkg", "cuda12"]
 nightly-runner = { features = ["nightly-runner"], no-default-feature = true }
+
+[pypi-dependencies]
+optuna = ">=4.9.0, <5"
+optuna-dashboard = ">=0.20.0, <0.21"

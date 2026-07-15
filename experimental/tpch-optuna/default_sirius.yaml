@@ -1,0 +1,45 @@
+sirius:
+  topology:
+    num_gpus: 1
+  memory:
+    gpu:
+      usage_limit_fraction: 0.9000
+      reservation_limit_fraction: 1.0
+      downgrade_trigger_fraction: 0.7500
+      downgrade_stop_fraction: 0.6500
+    host:
+      capacity_bytes: 33573022720
+      initial_number_pools: 10
+      pool_size: 512
+      block_size: 1048576
+    disk:
+      disk_id: 0
+      capacity_bytes: 2199023255552
+      downgrade_root_dirs: "/tmp/sirius_spill_default"
+  executor:
+    pipeline:
+      num_threads: 4
+    task_creator:
+      num_threads: 2
+    scan_manager:
+      num_threads: 8
+      uring_n_reactors: 1
+      enable_prefetch_cache: false
+    downgrade:
+      num_threads: 1
+      monitor_period: 10ms
+  operator_params:
+    scan_task_batch_size: 536870912
+    default_scan_task_varchar_size: 256
+    max_sort_partition_bytes: 0
+    max_sort_partition_memory_fraction: 0.3300
+    hash_partition_bytes: 536870912
+    concat_batch_bytes: 536870912
+    sort_sample_bytes: 536870912
+    max_build_hash_table_bytes: 524288000
+    mark_join_build_switch_ratio: 8.0000
+    enable_dynamic_filter_pushdown: true
+    dynamic_filter_domain_coverage_threshold: 0.9000
+    dynamic_filter_keep_threshold: 0.9000
+  telemetry:
+    enable_quent: false
