@@ -34,6 +34,7 @@ import glob
 import os
 import re
 import socket
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -41,6 +42,7 @@ import time
 from pathlib import Path
 
 import optuna
+from sqlalchemy import event
 
 # --------------------------------------------------------------------------
 # Paths / constants
@@ -425,7 +427,31 @@ def main() -> int:
         print(f"warmup: primed OS page cache with {n / GiB:.1f} GB "
               f"in {time.time() - t0:.0f}s")
 
-    storage = f"sqlite:///{workdir / (study_name + '.db')}"
+    # SQLite in WAL mode + a busy timeout so the live dashboard (a concurrent
+    # reader) doesn't collide with the study writer — plain rollback-journal
+    # SQLite serializes them and the dashboard 500s on every commit, especially
+    # at small scale factors where trials finish every couple of seconds.
+    # WAL must be set up-front on a single fresh connection: SQLite refuses to
+    # switch journal mode while any other connection is open, so once optuna's
+    # pool is up it's too late. WAL is persisted in the db header, so every later
+    # connection (optuna's pool and the dashboard's) inherits it.
+    db_path = workdir / (study_name + ".db")
+    _wal = sqlite3.connect(str(db_path))
+    _wal.execute("PRAGMA journal_mode=WAL")
+    _wal.close()
+
+    storage = optuna.storages.RDBStorage(
+        url=f"sqlite:///{db_path}",
+        engine_kwargs={"connect_args": {"timeout": 60}},
+    )
+
+    @event.listens_for(storage.engine, "connect")
+    def _sqlite_pragmas(dbapi_conn, _rec):  # noqa: ANN001
+        cur = dbapi_conn.cursor()
+        cur.execute("PRAGMA synchronous=NORMAL")
+        cur.execute("PRAGMA busy_timeout=60000")
+        cur.close()
+
     study = optuna.create_study(
         study_name=study_name,
         storage=storage,
