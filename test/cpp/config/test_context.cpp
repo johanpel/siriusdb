@@ -495,9 +495,10 @@ TEST_CASE("Sirius startup rejects unknown environment log backends before mutati
   duckdb::Config::LOG_BACKEND = "noop";
   setenv("SIRIUS_LOG_BACKEND", "syslog", 1);
 
-  REQUIRE_THROWS_WITH(duckdb::SiriusContextExtensionCallback{},
-                      Catch::Matchers::ContainsSubstring(
-                        "SIRIUS_LOG_BACKEND must be one of: duckdb, spdlog, noop; got 'syslog'"));
+  REQUIRE_THROWS_WITH(
+    duckdb::SiriusContextExtensionCallback{},
+    Catch::Matchers::ContainsSubstring(
+      "SIRIUS_LOG_BACKEND must be one of: duckdb, spdlog, quent, noop; got 'syslog'"));
   REQUIRE(duckdb::Config::LOG_BACKEND == "noop");
 
   setenv("SIRIUS_LOG_BACKEND", "duckdb", 1);
@@ -2407,4 +2408,28 @@ TEST_CASE("Sirius configuration enables dense count join by default and accepts 
     Catch::Matchers::ContainsSubstring("sirius.operator_params.dense_count_join_max_bytes") &&
       Catch::Matchers::ContainsSubstring("internal engine policy") &&
       Catch::Matchers::ContainsSubstring("remove this key"));
+}
+
+TEST_CASE("Quent backend rejects missing telemetry without replacing the logger",
+          "[log][quent_sink][isolated_context]")
+{
+  sirius::util::env_guard disabled("SIRIUS_DISABLE", "1");
+  sirius::util::env_guard backend("SIRIUS_LOG_BACKEND", "noop");
+  const auto previous_backend = duckdb::Config::LOG_BACKEND;
+  const auto previous_sink    = sirius::log::get_sink();
+  finally restore{[&] {
+    duckdb::Config::LOG_BACKEND = previous_backend;
+    sirius::log::set_sink(previous_sink);
+  }};
+  duckdb::DuckDB db(nullptr);
+  duckdb::Connection connection(db);
+  const auto noop = sirius::log::get_sink();
+  auto result     = connection.Query("SET sirius_log_backend = 'quent'");
+  REQUIRE(result->HasError());
+  CHECK(result->GetError().find("enabled engine telemetry session") != std::string::npos);
+  CHECK(duckdb::Config::LOG_BACKEND == "noop");
+  CHECK(sirius::log::get_sink() == noop);
+  CHECK(connection.Query("SELECT current_setting('sirius_log_backend')")
+          ->GetValue(0, 0)
+          .GetValue<std::string>() == "noop");
 }

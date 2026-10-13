@@ -863,6 +863,15 @@ fn generated_ndjson_imports_into_analyzer() {
         worker
             .init(engine.as_entity_ref(), "42".into(), "worker".into())
             .unwrap();
+        let mut log = context.observer::<instrumentation::Log>().handle();
+        log.initialized(worker.as_entity_ref()).unwrap();
+        log.info(
+            "query executing".into(),
+            "test.cpp".into(),
+            42,
+            "execute".into(),
+        )
+        .unwrap();
         let mut plan = context.observer::<instrumentation::Plan>().handle();
         plan.declaration(
             query.as_entity_ref(),
@@ -880,7 +889,7 @@ fn generated_ndjson_imports_into_analyzer() {
         .unwrap()
         .collect::<Result<Vec<_>, _>>()
         .unwrap();
-    assert_eq!(stored.len(), 8);
+    assert_eq!(stored.len(), 10);
 
     let context_dir = output.path().join(context_id.to_string());
     let inventory = crate::Viewer::context_inventory(&context_dir).unwrap();
@@ -918,7 +927,7 @@ fn generated_ndjson_imports_into_analyzer() {
     );
     assert_eq!(
         crate::Viewer::import_events(&context_dir).unwrap().count(),
-        8
+        10
     );
 
     let engine_events = crate::Viewer::import_events(&context_dir).unwrap();
@@ -965,5 +974,37 @@ fn query_groups_use_ui_attributes() {
     assert_eq!(
         analyzer.query_initial_group_by_attribute().as_deref(),
         Some(crate::boilerplate::QUERY_GROUP_ATTRIBUTE)
+    );
+}
+
+#[test]
+fn log_events_preserve_query_analysis() {
+    let mut events = fixture();
+    events.push(ev(
+        100,
+        0,
+        E::Log(s::LogEvent::Initialized {
+            worker_id: EntityRef::new(id(2), ()),
+        }),
+    ));
+    events.push(ev(
+        100,
+        3,
+        E::Log(s::LogEvent::Info {
+            message: "query executing".into(),
+            file: "test.cpp".into(),
+            line: 42,
+            function: "execute".into(),
+        }),
+    ));
+    let analyzer = SiriusUiAnalyzer::try_new(id(1), events.into_iter()).unwrap();
+    assert_eq!(
+        analyzer
+            .query_bundle(id(4))
+            .unwrap()
+            .entities
+            .operators
+            .len(),
+        1
     );
 }

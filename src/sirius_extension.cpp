@@ -2627,14 +2627,16 @@ static void SetLogBackend(ClientContext& context, SetScope scope, Value& paramet
 {
   throw_if_sirius_runtime_unavailable(context);
   auto backend = StringValue::Get(parameter);
-  if (backend != "duckdb" && backend != "spdlog" && backend != "noop") {
-    throw InvalidInputException("Unknown sirius_log_backend '%s' (expected: duckdb, spdlog, noop)",
-                                backend);
+  if (backend != "duckdb" && backend != "spdlog" && backend != "quent" && backend != "noop") {
+    throw InvalidInputException(
+      "Unknown sirius_log_backend '%s' (expected: duckdb, spdlog, quent, noop)", backend);
   }
   auto const previous_backend = Config::LOG_BACKEND;
   Config::LOG_BACKEND         = std::move(backend);
   try {
-    install_configured_log_sink(context.db.get());
+    auto runtime = context.registered_state->Get<SiriusContext>("sirius_state");
+    install_configured_log_sink(context.db.get(),
+                                runtime ? runtime->get_telemetry_context() : nullptr);
   } catch (...) {
     Config::LOG_BACKEND = previous_backend;
     throw;
@@ -3369,7 +3371,7 @@ void SiriusRegistration::InitialGPUConfigs(DBConfig& config,
 
   // Logging configuration
   config.AddExtensionOption("sirius_log_backend",
-                            "Logging backend for Sirius (duckdb, spdlog, noop)",
+                            "Logging backend for Sirius (duckdb, spdlog, quent, noop)",
                             LogicalType::VARCHAR,
                             Value(Config::LOG_BACKEND),
                             SetLogBackend);
@@ -3598,21 +3600,25 @@ static void LoadInternal(ExtensionLoader& loader)
 
   // SIRIUS_DISABLE means: no Sirius runtime initialization and no mask
   // publication (the extension binary itself may still be loaded).
-  auto callback              = make_shared_ptr<duckdb::SiriusContextExtensionCallback>();
+  auto previous_sink    = sirius::log::get_sink();
+  auto previous_backend = Config::LOG_BACKEND;
+  auto previous_dir     = Config::LOG_DIR;
+  auto previous_level   = Config::LOG_LEVEL;
+  duckdb::shared_ptr<duckdb::SiriusContextExtensionCallback> callback;
+  try {
+    callback = make_shared_ptr<duckdb::SiriusContextExtensionCallback>();
+    if (!callback->is_disabled()) { callback->initialize_context(); }
+    install_configured_log_sink(&db, callback->get_telemetry_context());
+  } catch (...) {
+    Config::LOG_BACKEND.swap(previous_backend);
+    Config::LOG_DIR.swap(previous_dir);
+    Config::LOG_LEVEL.swap(previous_level);
+    sirius::log::set_sink(std::move(previous_sink));
+    throw;
+  }
   auto* callback_ptr         = callback.get();
   bool const sirius_disabled = callback_ptr->is_disabled();
-
-  if (!sirius_disabled) {
-    // Config parsing above must remain NVTX-free. initialize_context creates Quent
-    // before resolving hardware or constructing any instrumented runtime objects.
-    callback_ptr->initialize_context();
-  }
   config.GetCallbackManager().Register(std::move(callback));
-
-  // The ctor already installed the db-independent backend; reinstall now that the
-  // DatabaseInstance exists so the duckdb backend (which needs it) is built and an
-  // unknown backend name is reported here rather than swallowed by the ctor.
-  install_configured_log_sink(&db);
 
   // The callback constructor above already read sirius.yaml, so its params are the defaults the
   // per-connection options register with.

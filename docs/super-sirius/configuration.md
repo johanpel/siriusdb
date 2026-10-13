@@ -697,8 +697,8 @@ Registered in `src/sirius_extension.cpp`. These can be changed at runtime:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `sirius_log_backend` | `spdlog` | Log sink: `spdlog`, `duckdb`, or `noop` |
-| `sirius_log_level` | `info` | Log level: trace, debug, info, warn, error, critical, off (`spdlog` only) |
+| `sirius_log_backend` | `spdlog` | Log sink: `spdlog`, `duckdb`, `quent`, or `noop` |
+| `sirius_log_level` | `info` | Log level: trace, debug, info, warn, error, critical, off (`spdlog` and `quent`) |
 | `sirius_log_dir` | `log` | Log output directory (`spdlog` only) |
 | `sirius_log_flush_seconds` | 3 | Log flush interval in seconds; 0 disables periodic flushing and negative values are rejected (`spdlog` only) |
 
@@ -707,7 +707,20 @@ Registered in `src/sirius_extension.cpp`. These can be changed at runtime:
 - **`duckdb`**: routes logs into DuckDB's own logging under the `Sirius` log type; enable and
   read them with `CALL enable_logging(); SELECT * FROM duckdb_logs WHERE type = 'Sirius';`.
   Level and enable are governed by DuckDB, not `sirius_log_level`.
+- **`quent`**: exports structured severity events into the engine's enabled Quent telemetry
+  session, using `telemetry.output_directory` and its exporter. Messages include file, line,
+  function, and a worker reference supplying process and engine identity. It honours
+  `sirius_log_level`; `sirius_log_dir` and `sirius_log_flush_seconds` do not apply.
+  Startup messages emitted before activation are discarded. Selection fails when telemetry is
+  disabled or the Sirius runtime is absent, preserving the previous backend and sink.
+  Export is asynchronous: explicit log flushing cannot guarantee delivery, and graceful
+  telemetry shutdown drains queued events. The existing viewer accepts these events but does
+  not display them.
 - **`noop`**: discards all logs.
+
+Logging remains process-wide: the most recently installed sink receives all Sirius messages,
+including messages from other engine instances. A Quent sink does not keep its session alive
+and discards messages after that session is destroyed.
 
 These can also be set at load via the `SIRIUS_LOG_BACKEND`, `SIRIUS_LOG_DIR`, and
 `SIRIUS_LOG_LEVEL` environment variables.

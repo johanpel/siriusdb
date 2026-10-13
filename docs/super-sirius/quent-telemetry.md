@@ -137,3 +137,15 @@ timeline, so you can see exactly when and where it ran across the resources.
 duration), grouped and sortable, to, for example, quickly find the most expensive operators in the query.
 
 ![Quent operator stats view](quent-screenshots/operator-stats-view.png)
+
+## Diagnostic logs
+
+Select `SET sirius_log_backend = 'quent'` after loading Sirius, or set
+`SIRIUS_LOG_BACKEND=quent` before startup. This requires `telemetry.enable_quent: true`.
+The `Log` stream is exported alongside query telemetry in the same context directory.
+Each severity is a repeatable event containing the message and source location; its
+`initialized` event links the log instance to the worker and process.
+
+Early startup messages are discarded. Export is asynchronous and drains during graceful
+telemetry shutdown. Logs have no query or task identifiers, and the current viewer does not
+show them. See [logging configuration](configuration.md#logging) for backend settings.

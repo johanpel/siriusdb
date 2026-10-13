@@ -315,3 +315,85 @@ TEST_CASE("telemetry_context nests threads under per-GPU device groups",
 
   std::filesystem::remove_all(out_dir);
 }
+
+TEST_CASE("Quent logging activates transactionally in fresh DuckDB and FFI runtimes",
+          "[telemetry_context][quent_startup][isolated_context]")
+{
+  const auto mode     = GENERATE(std::string{"ffi-log"},
+                             std::string{"duckdb-log"},
+                             std::string{"duckdb-log-sql"},
+                             std::string{"duckdb-log-disabled"});
+  const bool enabled  = GENERATE(false, true);
+  const bool disabled = mode == "duckdb-log-disabled";
+  CAPTURE(mode, enabled);
+  const auto root = std::filesystem::temp_directory_path() /
+                    ("sirius-quent-startup-" + quent::to_string(quent::now_v7()));
+  std::filesystem::create_directories(root);
+  const auto config_path = root / "sirius.yaml";
+  const auto output      = root / "telemetry";
+  {
+    std::ofstream config(config_path);
+    config << "sirius:\n"
+              "  topology: { num_gpus: 1 }\n"
+              "  memory:\n"
+              "    gpu: { usage_limit_fraction: 0.1 }\n"
+              "    host: { capacity_bytes: 2Gi, initial_number_pools: 1, pool_size: 128 }\n"
+              "  executor:\n"
+              "    pipeline: { num_threads: 1 }\n"
+              "    task_creator: { num_threads: 1 }\n"
+              "  telemetry:\n"
+              "    enable_quent: "
+           << (enabled ? "true" : "false") << '\n'
+           << "    output_directory: " << output.string() << '\n';
+  }
+  // SQL rejection keeps the startup noop backend; environment rejection restores the
+  // pre-startup sink and configuration, which the helper verifies.
+  const bool sql = mode == "duckdb-log-sql";
+  sirius::test::child_process_environment environment{
+    {{"SIRIUS_DISABLE", mode == "ffi-log" || disabled ? "1" : "0"},
+     {"SIRIUS_CONFIG_FILE", config_path.string()},
+     {"SIRIUS_LOG_BACKEND", sql ? "noop" : "quent"},
+     {"SIRIUS_LOG_LEVEL", "critical"},
+     {"SIRIUS_LOG_DIR", (root / "logs").string()},
+     {"SIRIUS_TEST_QUENT_REJECT", !enabled || disabled ? "1" : "0"}},
+    {"NVTX_INJECTION64_PATH", "NVTX_INJECTION32_PATH"}};
+  auto executable =
+    (std::filesystem::canonical("/proc/self/exe").parent_path() / "sirius_nvtx_startup").string();
+  std::string argument = mode;
+  char* arguments[]    = {executable.data(), argument.data(), nullptr};
+  pid_t child{};
+  REQUIRE(::posix_spawn(
+            &child, executable.c_str(), nullptr, nullptr, arguments, environment.data()) == 0);
+  const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(60);
+  int status{};
+  bool finished = false;
+  while (std::chrono::steady_clock::now() < deadline) {
+    auto result = ::waitpid(child, &status, WNOHANG);
+    if (result == child) {
+      finished = true;
+      break;
+    }
+    if (result < 0 && errno != EINTR) { break; }
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  }
+  if (!finished) {
+    ::kill(child, SIGKILL);
+    ::waitpid(child, &status, 0);
+  }
+  REQUIRE(finished);
+  REQUIRE(WIFEXITED(status));
+  CHECK(WEXITSTATUS(status) == 0);
+  if (enabled && !disabled) {
+    const auto lines = read_all_telemetry_lines(output, "Log");
+    CHECK(any_line_with_all(lines, {"quent startup marker", "Critical"}));
+    CHECK_FALSE(any_line_with_all(lines, {"filtered startup marker"}));
+    CHECK_FALSE(any_line_with_all(lines, {"Loaded Sirius configuration"}));
+    CHECK(std::distance(std::filesystem::directory_iterator(output),
+                        std::filesystem::directory_iterator{}) == 1);
+    CHECK_FALSE(std::filesystem::exists(root / "logs"));
+    if (mode != "ffi-log") {
+      CHECK(any_line_with_all(read_all_telemetry_lines(output, "Query"), {"Finished"}));
+    }
+  }
+  std::filesystem::remove_all(root);
+}

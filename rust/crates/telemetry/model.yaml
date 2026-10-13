@@ -244,3 +244,22 @@ fsms:
           channel: { uses: Channel }
         to: [ stationary, destructed ]
       destructed: {}
+
+logs:
+  Log:
+    doc: Sirius diagnostic messages.
+    events:
+      initialized:
+        attributes:
+          worker_id: { scope-ref: Worker }
+    attributes:
+      file: string
+      line: u32
+      function: string
+    levels:
+      - name: trace
+      - name: debug
+      - name: info
+      - name: warn
+      - name: error
+      - name: critical

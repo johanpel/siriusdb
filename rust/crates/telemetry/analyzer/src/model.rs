@@ -621,6 +621,7 @@ impl SiriusModelBuilder {
         }
 
         match data {
+            SiriusEvent::Log(_) => Ok(()),
             SiriusEvent::Engine(event) => {
                 if id != self.engine_id {
                     return Err(AnalyzerError::Validation(format!(

@@ -62,10 +62,12 @@ std::shared_ptr<const telemetry_context> telemetry_context::create(
 telemetry_context::telemetry_context(quent::Context&& context,
                                      const telemetry_config& config,
                                      const cucascade::memory::memory_reservation_manager* manager)
-  : engine_name_(config.engine_name),
+  : enabled_(config.enable_quent),
+    engine_name_(config.engine_name),
     context_(std::move(context)),
     engine_handle_(context_.engine_observer()->handle()),
     worker_handle_(context_.worker_observer()->handle()),
+    log_handle_(context_.log_observer()->handle()),
     default_query_group_handle_(context_.query_group_observer()->handle()),
     shared_thread_group_handle_(context_.thread_group_observer()->handle())
 {
@@ -75,6 +77,8 @@ telemetry_context::telemetry_context(quent::Context&& context,
     .process_id       = std::format("{}", getpid()),
     .tag              = "worker",
   });
+
+  log_handle_.initialized({.worker_id = worker_handle_.id()});
 
   // One session-scoped query group under this engine; every query in this context is reported
   // under it, so a whole run shows up as a single group rather than one group per query.

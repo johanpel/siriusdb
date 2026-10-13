@@ -83,10 +83,9 @@ target_include_directories(
 # A fresh-process helper for NVTX startup tests. A shared test context can cache
 # domain handles and mask first-domain capture bugs.
 add_executable(sirius_nvtx_startup test/telemetry/nvtx_startup.cpp)
-target_link_libraries(sirius_nvtx_startup sirius_core duckdb_static ZLIB::ZLIB)
-target_sources(
-  sirius_nvtx_startup PRIVATE src/sirius_extension_entry.cpp
-                              test/cpp/utils/sirius_extension_loader.cpp)
+target_link_libraries(sirius_nvtx_startup sirius_core duckdb_static ZLIB::ZLIB
+                      duckdb_generated_extension_loader)
+target_sources(sirius_nvtx_startup PRIVATE src/sirius_extension_entry.cpp)
 target_include_directories(
   sirius_nvtx_startup
   PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)

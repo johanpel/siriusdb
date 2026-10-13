@@ -79,7 +79,7 @@ void install_log_sink_from_env()
     if (log_dir_env) { duckdb::Config::LOG_DIR = log_dir_env; }
     if (level_env) { duckdb::Config::LOG_LEVEL = level_env; }
     // With no database, an unknown backend leaves the current sink in place.
-    duckdb::install_configured_log_sink(nullptr);
+    duckdb::install_configured_log_sink(nullptr, {}, true);
   } catch (...) {
     // Sink construction can throw (for example, if LOG_DIR cannot be created).
     // It happens before set_sink(), so the previous sink is still active.
@@ -160,49 +160,65 @@ struct Context::Impl {
 
   void bring_up(const sirius::parsed_sirius_config& config)
   {
-    install_log_sink_from_env();
-    context = duckdb::make_shared_ptr<duckdb::SiriusContext>();
-    context->initialize(config);
+    auto previous_sink    = sirius::log::get_sink();
+    auto previous_backend = duckdb::Config::LOG_BACKEND;
+    auto previous_dir     = duckdb::Config::LOG_DIR;
+    auto previous_level   = duckdb::Config::LOG_LEVEL;
+    try {
+      install_log_sink_from_env();
+      context = duckdb::make_shared_ptr<duckdb::SiriusContext>();
+      context->initialize(config);
+      if (duckdb::Config::LOG_BACKEND == "quent" &&
+          (std::getenv("SIRIUS_LOG_BACKEND") || std::getenv("SIRIUS_LOG_DIR") ||
+           std::getenv("SIRIUS_LOG_LEVEL"))) {
+        duckdb::install_configured_log_sink(nullptr, context->get_telemetry_context());
+      }
+      // Substrait lowering uses core functions and resolves local_files reads to parquet_scan.
+      db = duckdb::make_uniq<duckdb::DuckDB>(nullptr);
+      db->LoadStaticExtension<duckdb::CoreFunctionsExtension>();
+      db->LoadStaticExtension<duckdb::ParquetExtension>();
+      // Cache parquet footers across binds. The Substrait consumer builds the plan through the
+      // Relation API, which re-binds the whole subtree at every level, so a read of one file is
+      // bound once per operator above it; with the cache off each bind re-parses the footer and
+      // re-derives the column statistics (~0.5 s per bind for a 25 GB, 5k-row-group TPC-H SF100
+      // lineitem: Q21 spent 10 s lowering against 4.6 s executing). Set the option at the
+      // database level so every connection on this private DuckDB instance inherits it.
+      // This DuckDB instance is private to the engine, and the cache validates file mtimes.
+      duckdb::DBConfig::GetConfig(*db->instance)
+        .SetOptionByName("parquet_metadata_cache", duckdb::Value::BOOLEAN(true));
+      conn = duckdb::make_uniq<duckdb::Connection>(*db);
+      // Register the engine on the connection and disable DuckDB optimizer rewrites this
+      // no-fallback FFI path cannot safely execute. The transparent path only disables
+      // IN_CLAUSE and COMPRESSED_MATERIALIZATION here; this path remains more conservative.
+      auto& client = *conn->context;
+      client.registered_state->Insert(kSiriusStateKey, context);
+      // Per-connection Sirius state (guard depths, capture bookkeeping) for the
+      // embedded connection, mirroring OnConnectionOpened on the transparent path.
+      client.registered_state->Insert("sirius_connection_state",
+                                      duckdb::make_shared_ptr<duckdb::SiriusConnectionState>());
 
-    // Substrait lowering uses core functions and resolves local_files reads to parquet_scan.
-    db = duckdb::make_uniq<duckdb::DuckDB>(nullptr);
-    db->LoadStaticExtension<duckdb::CoreFunctionsExtension>();
-    db->LoadStaticExtension<duckdb::ParquetExtension>();
-    // Cache parquet footers across binds. The Substrait consumer builds the plan through the
-    // Relation API, which re-binds the whole subtree at every level, so a read of one file is
-    // bound once per operator above it; with the cache off each bind re-parses the footer and
-    // re-derives the column statistics (~0.5 s per bind for a 25 GB, 5k-row-group TPC-H SF100
-    // lineitem: Q21 spent 10 s lowering against 4.6 s executing). Set the option at the
-    // database level so every connection on this private DuckDB instance inherits it.
-    // This DuckDB instance is private to the engine, and the cache validates file mtimes.
-    duckdb::DBConfig::GetConfig(*db->instance)
-      .SetOptionByName("parquet_metadata_cache", duckdb::Value::BOOLEAN(true));
-    conn = duckdb::make_uniq<duckdb::Connection>(*db);
-    // Register the engine on the connection and disable DuckDB optimizer rewrites this
-    // no-fallback FFI path cannot safely execute. The transparent path only disables
-    // IN_CLAUSE and COMPRESSED_MATERIALIZATION here; this path remains more conservative.
-    auto& client = *conn->context;
-    client.registered_state->Insert(kSiriusStateKey, context);
-    // Per-connection Sirius state (guard depths, capture bookkeeping) for the
-    // embedded connection, mirroring OnConnectionOpened on the transparent path.
-    client.registered_state->Insert("sirius_connection_state",
-                                    duckdb::make_shared_ptr<duckdb::SiriusConnectionState>());
-
-    // Fragment bind path: register catalog + sirius_stream_source before any plan binds.
-    client.registered_state->Insert(sirius::exec::stream_bind_catalog::kStateKey,
-                                    duckdb::make_shared_ptr<sirius::exec::stream_bind_catalog>());
-    sirius::exec::register_stream_source_function(*db->instance);
-    client.config.enable_optimizer = true;
-    auto& disabled = duckdb::DBConfig::GetConfig(client).options.disabled_optimizers;
-    disabled.insert(duckdb::OptimizerType::IN_CLAUSE);
-    disabled.insert(duckdb::OptimizerType::COMPRESSED_MATERIALIZATION);
-    // Keep this FFI-only restriction until its no-fallback execution path has
-    // dedicated GPU_VALUES coverage.
-    disabled.insert(duckdb::OptimizerType::STATISTICS_PROPAGATION);
-    disabled.insert(duckdb::OptimizerType::COLUMN_LIFETIME);
-    // Rewrites an ORDER BY ... LIMIT parquet scan into a semi-join on virtual
-    // file_index/file_row_number columns the GPU scan drops.
-    disabled.insert(duckdb::OptimizerType::LATE_MATERIALIZATION);
+      // Fragment bind path: register catalog + sirius_stream_source before any plan binds.
+      client.registered_state->Insert(sirius::exec::stream_bind_catalog::kStateKey,
+                                      duckdb::make_shared_ptr<sirius::exec::stream_bind_catalog>());
+      sirius::exec::register_stream_source_function(*db->instance);
+      client.config.enable_optimizer = true;
+      auto& disabled = duckdb::DBConfig::GetConfig(client).options.disabled_optimizers;
+      disabled.insert(duckdb::OptimizerType::IN_CLAUSE);
+      disabled.insert(duckdb::OptimizerType::COMPRESSED_MATERIALIZATION);
+      // Keep this FFI-only restriction until its no-fallback execution path has
+      // dedicated GPU_VALUES coverage.
+      disabled.insert(duckdb::OptimizerType::STATISTICS_PROPAGATION);
+      disabled.insert(duckdb::OptimizerType::COLUMN_LIFETIME);
+      // Rewrites an ORDER BY ... LIMIT parquet scan into a semi-join on virtual
+      // file_index/file_row_number columns the GPU scan drops.
+      disabled.insert(duckdb::OptimizerType::LATE_MATERIALIZATION);
+    } catch (...) {
+      duckdb::Config::LOG_BACKEND.swap(previous_backend);
+      duckdb::Config::LOG_DIR.swap(previous_dir);
+      duckdb::Config::LOG_LEVEL.swap(previous_level);
+      sirius::log::set_sink(std::move(previous_sink));
+      throw;
+    }
   }
 };
 

@@ -979,13 +979,13 @@ class SiriusContext : public ClientContextState {
     semantic_decline_counts_{};
 };
 
-/// Installs the sink selected by `Config::LOG_BACKEND` (with `Config::LOG_*`).
+/// Installs the configured sink, requiring enabled telemetry for `quent`.
 ///
-/// `spdlog` and `noop` install unconditionally; `duckdb` needs `db` and, given a
-/// null `db`, defers (leaves the current sink) so a caller without one yet can
-/// still select it. An unknown backend throws only when `db` is non-null, so the
-/// null (best-effort) path never throws.
-void install_configured_log_sink(DatabaseInstance* db);
+/// `defer_quent` installs a no-op sink during startup; `duckdb` defers when `db` is null.
+void install_configured_log_sink(
+  DatabaseInstance* db,
+  std::shared_ptr<const sirius::telemetry::telemetry_context> telemetry = {},
+  bool defer_quent                                                      = false);
 
 /// todo(amin): when duckdb is updated, we need to enable OnExtensionLoaded to support sirius
 /// extensions
@@ -998,6 +998,12 @@ class SiriusContextExtensionCallback : public ExtensionCallback {
   void initialize_context();
 
   [[nodiscard]] bool is_disabled() const noexcept { return disabled_; }
+
+  [[nodiscard]] std::shared_ptr<const sirius::telemetry::telemetry_context> get_telemetry_context()
+    const
+  {
+    return context_ ? context_->get_telemetry_context() : nullptr;
+  }
 
   /// \brief Called when a new connection is opened.
   /// \param context The client context.

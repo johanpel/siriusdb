@@ -32,6 +32,7 @@
 #include "log/duckdb_sink.hpp"
 #include "log/logging.hpp"
 #include "log/noop_sink.hpp"
+#include "log/quent_sink.hpp"
 #include "log/spdlog_owning_sink.hpp"
 #include "memory/numa_small_pinned_mr.hpp"
 #include "memory/resource_ref_utils.hpp"
@@ -2082,7 +2083,10 @@ void SiriusContext::release_query_lifecycle_slot() noexcept
 
 // ================= Free Functions ================= //
 
-void install_configured_log_sink(DatabaseInstance* db)
+void install_configured_log_sink(
+  DatabaseInstance* db,
+  std::shared_ptr<const sirius::telemetry::telemetry_context> telemetry,
+  bool defer_quent)
 {
   auto parsed_level = sirius::log::string_to_enum(Config::LOG_LEVEL);
   auto lvl          = parsed_level.value_or(sirius::log::level::info);
@@ -2100,22 +2104,27 @@ void install_configured_log_sink(DatabaseInstance* db)
     if (!parsed_level) {
       SIRIUS_LOG_WARN("Unknown log level '{}', defaulting to info", Config::LOG_LEVEL);
     }
+  } else if (backend == "quent") {
+    auto sink = defer_quent ? sirius::log::make_noop_sink()
+                            : sirius::log::make_quent_sink(std::move(telemetry));
+    sink->set_level(lvl);
+    sirius::log::set_sink(std::move(sink));
   } else if (backend == "noop") {
     sirius::log::set_sink(sirius::log::make_noop_sink());
   } else if (backend == "duckdb") {
     // Needs a DatabaseInstance; with none, defer and leave the current sink.
     if (db) { sirius::log::set_sink(sirius::log::make_duckdb_sink(*db)); }
   } else if (db) {
-    // Only report a bad backend on the db path; the db-less call is best-effort
-    // and must not throw.
-    throw InvalidInputException("Unknown sirius_log_backend '%s' (expected: duckdb, spdlog, noop)",
-                                backend);
+    // Preserve best-effort handling of unknown backend names on the db-less path.
+    throw InvalidInputException(
+      "Unknown sirius_log_backend '%s' (expected: duckdb, spdlog, quent, noop)", backend);
   }
 }
 
 SiriusContextExtensionCallback::SiriusContextExtensionCallback()
   : disabled_(sirius_disabled_by_env())
 {
+  auto const previous_sink        = sirius::log::get_sink();
   auto const previous_log_backend = Config::LOG_BACKEND;
   auto const previous_log_dir     = Config::LOG_DIR;
   auto const previous_log_level   = Config::LOG_LEVEL;
@@ -2124,9 +2133,9 @@ SiriusContextExtensionCallback::SiriusContextExtensionCallback()
   auto const* level_env           = std::getenv("SIRIUS_LOG_LEVEL");
   if (backend_env) {
     std::string_view const backend{backend_env};
-    if (backend != "duckdb" && backend != "spdlog" && backend != "noop") {
+    if (backend != "duckdb" && backend != "spdlog" && backend != "quent" && backend != "noop") {
       throw InvalidInputException(
-        "SIRIUS_LOG_BACKEND must be one of: duckdb, spdlog, noop; got '%s'", backend_env);
+        "SIRIUS_LOG_BACKEND must be one of: duckdb, spdlog, quent, noop; got '%s'", backend_env);
     }
   }
   if (level_env && !sirius::log::string_to_enum(level_env)) {
@@ -2141,14 +2150,15 @@ SiriusContextExtensionCallback::SiriusContextExtensionCallback()
   // read_config_file_if_exists() below; the duckdb backend needs a db (installed
   // later).
   try {
-    install_configured_log_sink(nullptr);
+    install_configured_log_sink(nullptr, {}, true);
+    read_config_file_if_exists();
   } catch (...) {
     Config::LOG_BACKEND = previous_log_backend;
     Config::LOG_DIR     = previous_log_dir;
     Config::LOG_LEVEL   = previous_log_level;
+    sirius::log::set_sink(previous_sink);
     throw;
   }
-  read_config_file_if_exists();
 }
 
 void SiriusContextExtensionCallback::initialize_context()

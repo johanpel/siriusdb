@@ -157,6 +157,7 @@ set(TEST_SOURCES
     test/cpp/io/rest/test_rest_reactor.cpp
     test/cpp/log/test_duckdb_sink.cpp
     test/cpp/log/test_logging.cpp
+    test/cpp/log/test_quent_sink.cpp
     test/cpp/scan_manager/test_s3_routing_cutover.cpp
     test/cpp/scan_manager/test_s3_config_scopes.cpp
     test/cpp/scan_manager/test_prefetching_scheduler.cpp
