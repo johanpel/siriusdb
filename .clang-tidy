@@ -67,6 +67,8 @@ CheckOptions:
    value:           llvm
  - key:             modernize-use-nullptr.NullMacros
    value:           'NULL'
+ # Work around confirmed public-header recognition failures in dependencies.
+ # Matching headers are exempt from both missing- and unused-include checks.
  - key:             misc-include-cleaner.IgnoreHeaders
    value:           "cuda/stream$;\
                      cuda/__stream/stream_ref[.]h$;\
