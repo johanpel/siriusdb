@@ -16,6 +16,9 @@
 
 #include "log/level.hpp"
 
+#include <optional>
+#include <string_view>
+
 namespace sirius::log {
 
 std::optional<level> string_to_enum(std::string_view name)

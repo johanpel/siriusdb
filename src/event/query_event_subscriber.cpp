@@ -16,9 +16,19 @@
 
 #include "event/query_event_subscriber.hpp"
 
+#include "event/event.hpp"
+#include "event/query_event_publisher.hpp"
+#include "exec/queue_priority.hpp"
 #include "exec/thread_util.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "query_id.hpp"
 
+#include <atomic>
+#include <cstddef>
+#include <cstdint>
+#include <initializer_list>
 #include <mutex>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <thread>

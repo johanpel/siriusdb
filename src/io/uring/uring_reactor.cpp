@@ -17,36 +17,52 @@
 #include "io/uring/uring_reactor.hpp"
 
 #include "cucascade/cuda/event.hpp"
+#include "cuda_runtime_api.h"
 #include "exec/thread_util.hpp"
 #include "io/cache/types.hpp"
 #include "io/details/slot_pool.hpp"
 #include "io/io_request.hpp"
 #include "io/types.hpp"
+#include "io/uring/config.hpp"
 #include "io/uring/types.hpp"
+
+#include <cudf/io/text/byte_range_info.hpp>
 
 #include <rmm/cuda_device.hpp>
 #include <rmm/error.hpp>
 
+#include <cuda_runtime_api.h>
+
 #include <fcntl.h>
+#include <liburing.h>
+#include <liburing/io_uring.h>
+#include <limits.h>
+#include <linux/types.h>
 #include <log/logging.hpp>
 #include <sys/stat.h>
 #include <sys/uio.h>
+#include <unistd.h>
 
 #include <algorithm>
 #include <array>
+#include <atomic>
 #include <cassert>
 #include <cerrno>
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <exception>
 #include <filesystem>
 #include <limits>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <span>
 #include <stdexcept>
+#include <stop_token>
 #include <string>
+#include <string_view>
 #include <system_error>
 #include <thread>
 #include <tuple>

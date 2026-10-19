@@ -18,6 +18,10 @@
 
 #include <cucascade/memory/common.hpp>
 
+#include <optional>
+#include <span>
+#include <utility>
+
 namespace sirius::op {
 
 std::optional<std::pair<int, int>> find_pair_without_peer_dma(std::span<int const> device_ids)

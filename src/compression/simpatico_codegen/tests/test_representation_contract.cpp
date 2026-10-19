@@ -10,16 +10,17 @@
 // Runtime tests verify that decompress_standalone_representation() reports a
 // deterministic error when given a storage-only fused representation.
 
+#include "codegen/plan/operator_registry.hpp"
 #include "codegen/plan/representation.hpp"
 
-#include <cudf/column/column.hpp>
+#include <cudf/types.hpp>
 
 #include <rmm/mr/per_device_resource.hpp>
-#include <rmm/resource_ref.hpp>
 
-#include <cuda/stream>
+#include <cuda_runtime_api.h>
 
 #include <cstdio>
+#include <exception>
 #include <stdexcept>
 #include <string>
 #include <type_traits>

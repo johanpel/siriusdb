@@ -19,14 +19,19 @@
 #include "planner/connector_registry.hpp"
 #include "sirius_sql_rewrite.hpp"
 
+#include <duckdb/common/enums/logical_operator_type.hpp>
+#include <duckdb/common/enums/physical_operator_type.hpp>
 #include <duckdb/common/exception.hpp>
 #include <duckdb/common/multi_file/multi_file_list.hpp>
 #include <duckdb/common/multi_file/multi_file_states.hpp>
 #include <duckdb/execution/operator/scan/physical_table_scan.hpp>
+#include <duckdb/function/function.hpp>
+#include <duckdb/function/table_function.hpp>
 #include <duckdb/planner/operator/logical_get.hpp>
 
 #include <algorithm>
 #include <stdexcept>
+#include <string>
 
 namespace sirius::transparent {
 bool plan_source_policy::cpu_replay_permitted() const noexcept

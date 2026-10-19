@@ -19,10 +19,14 @@
 #include "exec/completion_controller.hpp"
 #include "exec/scoped_dispatcher.hpp"
 #include "exec/try.hpp"
+#include "io/io_context.hpp"
 #include "op/scan/gpu_ingestible.hpp"
+#include "op/scan/gpu_ingestible_types.hpp"
 
 #include <cassert>
 #include <exception>
+#include <functional>
+#include <memory>
 #include <utility>
 
 namespace sirius::scan_manager {

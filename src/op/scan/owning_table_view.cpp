@@ -16,9 +16,22 @@
 
 #include "op/scan/owning_table_view.hpp"
 
+#include <cudf/column/column_view.hpp>
+#include <cudf/table/table.hpp>
+#include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
+
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
+
+#include <cstddef>
+#include <memory>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <variant>
 #include <vector>
 
 namespace sirius::op::scan {

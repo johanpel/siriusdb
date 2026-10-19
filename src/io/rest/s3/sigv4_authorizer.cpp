@@ -17,12 +17,17 @@
 #include "io/rest/s3/sigv4_authorizer.hpp"
 
 #include "io/io_errors.hpp"
+#include "io/rest/authorizer.hpp"
 #include "io/rest/s3/sigv4.hpp"
+#include "io/rest/s3/static_credentials.hpp"
 
 #include <algorithm>
 #include <cctype>
+#include <chrono>
 #include <ctime>
-#include <stdexcept>
+#include <exception>
+#include <string>
+#include <string_view>
 #include <utility>
 
 namespace sirius::io::rest::s3 {

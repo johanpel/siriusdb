@@ -17,10 +17,13 @@
 #include "helper/type_conversions.hpp"
 
 #include "duckdb/common/optional_idx.hpp"
+#include "helper/logical_type.hpp"
 
 #include <duckdb/common/exception.hpp>
 #include <duckdb/common/types.hpp>
-#include <duckdb/common/types/decimal.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <cstdint>
 
 namespace sirius {
 

@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "codegen/util/stream_pool.hpp"
 
+#include "cuda_runtime_api.h"
+
+#include <cuda_runtime_api.h>
+
+#include <cstddef>
 #include <map>
 #include <stdexcept>
 #include <string>

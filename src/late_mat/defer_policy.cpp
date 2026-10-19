@@ -16,7 +16,11 @@
 
 #include "late_mat/defer_policy.hpp"
 
+#include <cstddef>
+#include <cstdint>
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
 namespace sirius::late_mat {
 

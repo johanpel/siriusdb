@@ -18,6 +18,11 @@
 
 #include <cudf/detail/utilities/cuda_memcpy.hpp>
 
+#include <cuda/stream>
+#include <cuda_runtime_api.h>
+
+#include <cstddef>
+
 namespace sirius::cuda {
 
 void device_copy_batch::reserve(std::size_t n)

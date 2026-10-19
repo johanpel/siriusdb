@@ -17,17 +17,30 @@
 #include "late_mat/port_materialize.hpp"
 
 #include "helper/numeric_narrowing.hpp"
+#include "late_mat/column_origin.hpp"
+#include "late_mat/defer_directive.hpp"
 #include "late_mat/materialize.hpp"
 #include "late_mat/prepared_selection.hpp"
 #include "scan_manager/late_mat_resolver.hpp"
 #include "telemetry/nvtx.hpp"
 
 #include <cudf/column/column.hpp>
+#include <cudf/table/table.hpp>
+#include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
 #include <cudf/unary.hpp>
 
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
+
+#include <cstddef>
+#include <cstdint>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace sirius::late_mat {

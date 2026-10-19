@@ -8,10 +8,16 @@
 
 #include "codegen/plan/operator_registry.hpp"
 
+#include "codegen/plan/bit_spec.hpp"
 #include "codegen/plan/plan_interpreter.hpp"
 #include "codegen/plan/representation.hpp"
 
+#include <cstddef>
+#include <memory>
+#include <optional>
+#include <string>
 #include <string_view>
+#include <vector>
 
 namespace simpatico {
 namespace {

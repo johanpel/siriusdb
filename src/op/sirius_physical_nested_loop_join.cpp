@@ -16,26 +16,37 @@
 
 #include "op/sirius_physical_nested_loop_join.hpp"
 
-#include "config.hpp"
+#include "cucascade/data/data_batch.hpp"
+#include "cucascade/memory/memory_space.hpp"
 #include "cudf/cudf_utils.hpp"
 #include "data/data_batch_utils.hpp"
 #include "duckdb/common/exception.hpp"
 #include "duckdb/main/client_context.hpp"
+#include "expression/ast/reference.hpp"
+#include "expression/join_condition.hpp"
 #include "expression_evaluator/expression_evaluator.hpp"
-#include "expression_evaluator/gpu_expression_translator_internal.hpp"
+#include "helper/logical_type.hpp"
 #include "helper/type_conversions.hpp"
 #include "log/logging.hpp"
 #include "memory/size_arithmetic.hpp"
 #include "op/cross_join_slicing.hpp"
+#include "op/partition_placement.hpp"
 #include "op/sirius_physical_concat.hpp"
 #include "op/sirius_physical_hash_join.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "op/sirius_physical_partition_consumer_operator.hpp"
 #include "pipeline/sirius_meta_pipeline.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 #include "sirius/exception.hpp"
+#include "telemetry/data_batch_probe.hpp"
 #include "telemetry/nvtx.hpp"
 
+#include <cudf/ast/ast_operator.hpp>
 #include <cudf/ast/expressions.hpp>
 #include <cudf/column/column.hpp>
+#include <cudf/column/column_factories.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/copying.hpp>
 #include <cudf/filling.hpp>
 #include <cudf/join/conditional_join.hpp>
@@ -43,11 +54,30 @@
 #include <cudf/scalar/scalar.hpp>
 #include <cudf/table/table_view.hpp>
 #include <cudf/transform.hpp>
+#include <cudf/types.hpp>
 
+#include <rmm/device_uvector.hpp>
 #include <rmm/resource_ref.hpp>
 
+#include <cuda/stream>
+
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/enums/join_type.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <cstdint>
 #include <cstdio>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <optional>
 #include <span>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

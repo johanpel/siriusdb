@@ -17,7 +17,11 @@
 #include "scan_manager/round_robin_strategy.hpp"
 
 #include "op/sirius_physical_operator.hpp"
+#include "scan_manager/balancing_strategy.hpp"
 
+#include <atomic>
+#include <cstddef>
+#include <optional>
 #include <utility>
 #include <vector>
 

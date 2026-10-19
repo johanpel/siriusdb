@@ -15,14 +15,15 @@
  */
 
 #include "op/sirius_physical_operator.hpp"
-#include "op/sirius_physical_operator_type.hpp"
 #include "pipeline/repository_wiring.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 
 #include <cucascade/data/data_repository.hpp>
 #include <cucascade/data/data_repository_manager.hpp>
 
+#include <cstddef>
 #include <memory>
+#include <vector>
 
 namespace sirius {
 namespace pipeline {

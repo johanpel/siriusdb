@@ -16,13 +16,28 @@
 
 #include "op/sirius_physical_column_data_scan.hpp"
 
-#include "config.hpp"
+#include "helper/logical_type.hpp"
 #include "op/sirius_physical_delim_join.hpp"
-#include "op/sirius_physical_grouped_aggregate.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "pipeline/sirius_meta_pipeline.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 #include "sirius/exception.hpp"
 #include "telemetry/nvtx.hpp"
+
+#include <cuda/stream>
+
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/constants.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/optionally_owned_ptr.hpp>
+#include <duckdb/common/pair.hpp>
+#include <duckdb/common/types/column/column_data_collection.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <cstddef>
+#include <memory>
+#include <utility>
 
 namespace sirius {
 namespace op {

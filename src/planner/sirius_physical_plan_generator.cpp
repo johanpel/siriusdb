@@ -16,7 +16,7 @@
 
 #include "planner/sirius_physical_plan_generator.hpp"
 
-#include "config.hpp"
+#include "cucascade/memory/common.hpp"
 #include "duckdb/catalog/catalog_entry/duck_table_entry.hpp"
 #include "duckdb/common/multi_file/multi_file_reader.hpp"
 #include "duckdb/common/multi_file/multi_file_states.hpp"
@@ -36,18 +36,28 @@
 #include "duckdb/planner/operator/logical_extension_operator.hpp"
 #include "duckdb/planner/table_filter.hpp"
 #include "duckdb/storage/storage_manager.hpp"
+#include "event/event.hpp"
+#include "expression/ast/node.hpp"
+#include "expression/ast/reference.hpp"
 #include "expression/ast/utils.hpp"
+#include "helper/logical_type.hpp"
 #include "helper/type_conversions.hpp"
+#include "helper/types.hpp"
 #include "io/s3/duckdb_secret_config.hpp"
-#include "io/uri_parser.hpp"
 #include "log/logging.hpp"
-#include "op/dynamic_filter/sirius_dynamic_filter.hpp"
 #include "op/scan/duckdb_native_gpu_ingestible.hpp"
+#include "op/scan/duckdb_native_metadata.hpp"
 #include "op/scan/iceberg_dv_preparation.hpp"
 #include "op/scan/iceberg_gpu_ingestible.hpp"
+#include "op/scan/iceberg_metadata_reader.hpp"
 #include "op/scan/parquet_gpu_ingestible.hpp"
+#include "op/scan/scan_plan.hpp"
 #include "op/scan/sirius_gpu_scan_operator.hpp"
 #include "op/scan/sirius_physical_dynamic_filter.hpp"
+#include "op/scan/table_scan/bound_read_view.hpp"
+#include "op/scan/table_scan/materializer_capabilities.hpp"
+#include "op/scan/table_scan/parquet_physical_profile.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
 #include "op/sirius_physical_column_data_scan.hpp"
 #include "op/sirius_physical_concat.hpp"
 #include "op/sirius_physical_delim_join.hpp"
@@ -59,6 +69,7 @@
 #include "op/sirius_physical_hash_join.hpp"
 #include "op/sirius_physical_merge_sort.hpp"
 #include "op/sirius_physical_nested_loop_join.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_order.hpp"
 #include "op/sirius_physical_partition.hpp"
 #include "op/sirius_physical_passthrough_sink.hpp"
@@ -81,16 +92,43 @@
 #include "transparent/read_view_registry.hpp"
 
 #include <cudf/cudf_utils.hpp>
+#include <cudf/types.hpp>
 
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/enums/join_type.hpp>
+#include <duckdb/common/enums/logical_operator_type.hpp>
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/multi_file/multi_file_data.hpp>
 #include <duckdb/common/serializer/binary_serializer.hpp>
 #include <duckdb/common/serializer/memory_stream.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/function/table_function.hpp>
+#include <duckdb/main/profiler/metrics.hpp>
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cstdint>
 #include <cstdlib>
+#include <functional>
+#include <limits>
+#include <memory>
+#include <new>
 #include <numeric>
+#include <optional>
+#include <stdexcept>
+#include <string>
+#include <string_view>
 #include <thread>
+#include <unordered_map>
 #include <utility>
+#include <variant>
+#include <vector>
 
 namespace sirius::planner {
 

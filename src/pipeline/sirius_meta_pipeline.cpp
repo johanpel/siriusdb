@@ -16,9 +16,15 @@
 
 #include "pipeline/sirius_meta_pipeline.hpp"
 
-#include "config.hpp"
+#include "common/optional_ptr.hpp"
+#include "pipeline/pipeline_build_context.hpp"
+
+#include <duckdb/common/assert.hpp>
 
 #include <algorithm>
+#include <functional>
+#include <memory>
+#include <vector>
 
 namespace sirius {
 namespace pipeline {

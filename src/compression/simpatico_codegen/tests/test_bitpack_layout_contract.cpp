@@ -9,25 +9,31 @@
 #include "api/simpatico_codegen.hpp"
 #include "codegen/jit/fused_tree.hpp"
 #include "codegen/plan/leaf_desc.hpp"
+#include "codegen/plan/operator_registry.hpp"
+#include "cuda_runtime_api.h"
 #include "test_utils.hpp"
 
 #include <cudf/column/column_factories.hpp>
 #include <cudf/table/table.hpp>
+#include <cudf/types.hpp>
 #include <cudf/utilities/default_stream.hpp>
 
 #include <rmm/mr/per_device_resource.hpp>
 
+#include <cuda/stream>
 #include <cuda_runtime.h>
 
 #include <algorithm>
 #include <bit>
 #include <cstdint>
 #include <cstdio>
+#include <exception>
 #include <limits>
 #include <memory>
 #include <numeric>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace {

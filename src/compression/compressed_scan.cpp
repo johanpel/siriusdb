@@ -16,23 +16,33 @@
 
 #include "compressed_scan.hpp"
 
+#include "codegen/plan/plan_interpreter.hpp"
+#include "codegen/plan/representation.hpp"
 #include "decompression_pushdown_policy.hpp"
 
-#include <cudf/column/column.hpp>
 #include <cudf/table/table.hpp>
+#include <cudf/types.hpp>
+
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
 
 #include <api/simpatico_codegen.hpp>
 #include <codegen/selection/selection.hpp>
 #include <codegen/util/stream_pool.hpp>
-#include <log/logging.hpp>
 #include <sirius/exception.hpp>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <limits>
-#include <numeric>
+#include <memory>
+#include <optional>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace sirius {
 

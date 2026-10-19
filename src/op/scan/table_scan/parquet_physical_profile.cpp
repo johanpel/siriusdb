@@ -19,19 +19,34 @@
 #include "io/parquet_helpers.hpp"
 #include "io/sirius_datasource.hpp"
 #include "op/scan/parquet_metadata.hpp"
-#include "op/scan/parquet_schema_mapping.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
 
+#include <cudf/io/datasource.hpp>
 #include <cudf/io/experimental/hybrid_scan.hpp>
+#include <cudf/io/parquet.hpp>
 #include <cudf/io/parquet_io_utils.hpp>
+#include <cudf/io/parquet_schema.hpp>
+#include <cudf/utilities/span.hpp>
+
+#include <duckdb/common/types.hpp>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
 #include <limits>
 #include <map>
+#include <memory>
+#include <optional>
 #include <set>
+#include <span>
 #include <stdexcept>
+#include <string>
 #include <tuple>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
+#include <vector>
 
 namespace sirius::op::scan {
 namespace {

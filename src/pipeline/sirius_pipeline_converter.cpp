@@ -21,29 +21,38 @@
 #include "op/scan/iceberg_gpu_ingestible.hpp"
 #include "op/scan/parquet_gpu_ingestible.hpp"
 #include "op/scan/sirius_gpu_scan_operator.hpp"
+#include "op/scan/table_scan/bound_read_view.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
 #include "op/sirius_physical_column_data_scan.hpp"
 #include "op/sirius_physical_concat.hpp"
 #include "op/sirius_physical_cte.hpp"
 #include "op/sirius_physical_delim_join.hpp"
-#include "op/sirius_physical_dense_count_join.hpp"
-#include "op/sirius_physical_grouped_aggregate.hpp"
 #include "op/sirius_physical_hash_join.hpp"
 #include "op/sirius_physical_operator.hpp"
 #include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_partition.hpp"
+#include "op/sirius_physical_partition_consumer_operator.hpp"
 #include "op/sirius_physical_streaming_source.hpp"
+#include "pipeline/pipeline_build_context.hpp"
 #include "pipeline/repository_wiring.hpp"
 #include "sirius/exception.hpp"
+#include "transparent/plan_source_policy.hpp"
 #include "transparent/read_view_registry.hpp"
 
+#include <duckdb/common/assert.hpp>
 #include <duckdb/common/types/blob.hpp>
+#include <duckdb/common/types/string_type.hpp>
 
 #include <algorithm>
+#include <cstddef>
 #include <functional>
+#include <limits>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 namespace sirius::pipeline {

@@ -16,20 +16,33 @@
 
 #include "op/scan/parquet_materialize.hpp"
 
-#include "io/io_context.hpp"
 #include "io/types.hpp"
 
 #include <cudf/io/datasource.hpp>
+#include <cudf/io/experimental/hybrid_scan.hpp>
 #include <cudf/io/experimental/hybrid_scan_multifile.hpp>
+#include <cudf/io/parquet.hpp>
+#include <cudf/io/parquet_schema.hpp>
+#include <cudf/io/text/byte_range_info.hpp>
+#include <cudf/table/table.hpp>
+#include <cudf/types.hpp>
 #include <cudf/utilities/span.hpp>
 
 #include <rmm/device_buffer.hpp>
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <iterator>
+#include <memory>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace sirius::op::scan {
 

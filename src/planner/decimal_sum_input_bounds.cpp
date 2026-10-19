@@ -22,7 +22,10 @@
 #include "op/aggregate/aggregate_op_util.hpp"
 #include "planner/scan_column_origin.hpp"
 
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/types.hpp>
 #include <duckdb/common/types/value.hpp>
+#include <duckdb/common/unique_ptr.hpp>
 #include <duckdb/function/table_function.hpp>
 #include <duckdb/planner/expression/bound_aggregate_expression.hpp>
 #include <duckdb/planner/expression/bound_reference_expression.hpp>
@@ -32,7 +35,11 @@
 #include <duckdb/storage/statistics/numeric_stats.hpp>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
 #include <utility>
+#include <vector>
 
 namespace sirius::planner {
 

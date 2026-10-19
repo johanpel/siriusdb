@@ -15,6 +15,9 @@
  */
 
 // sirius
+#include "expression/ast/constant.hpp"
+#include "expression/ast/reference.hpp"
+
 #include <expression/ast/constant_range.hpp>
 #include <expression/ast/node.hpp>
 #include <expression/value.hpp>
@@ -24,12 +27,17 @@
 
 // cudf
 #include <cudf/ast/expressions.hpp>
-#include <cudf/cudf_utils.hpp>
 #include <cudf/fixed_point/fixed_point.hpp>
 #include <cudf/scalar/scalar.hpp>
+#include <cudf/types.hpp>
+#include <cudf/utilities/type_dispatcher.hpp>
 
 // standard library
+#include <cstdint>
+#include <initializer_list>
+#include <memory>
 #include <optional>
+#include <utility>
 #include <variant>
 
 namespace sirius {

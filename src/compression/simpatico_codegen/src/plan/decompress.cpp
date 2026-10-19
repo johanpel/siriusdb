@@ -2,30 +2,46 @@
 #include "codegen/bridge/fused_tree_build.hpp"
 #include "codegen/codegen_bridge.hpp"
 #include "codegen/decode/masked_launch.hpp"
+#include "codegen/jit/fused_tree.hpp"
 #include "codegen/plan/bitjoin_layout.hpp"
+#include "codegen/plan/operator_registry.hpp"
+#include "codegen/plan/plan_dsl.hpp"
 #include "codegen/plan/plan_interpreter.hpp"
+#include "codegen/plan/plan_tree.hpp"
+#include "codegen/plan/representation.hpp"
+#include "codegen/selection/selection.hpp"
 #include "codegen/util/nvtx.hpp"
+#include "cuda_runtime_api.h"
 
 #include <cudf/aggregation.hpp>
 #include <cudf/binaryop.hpp>
+#include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/copying.hpp>
-#include <cudf/dictionary/dictionary_factories.hpp>
 #include <cudf/filling.hpp>
 #include <cudf/null_mask.hpp>
 #include <cudf/reduction.hpp>
 #include <cudf/scalar/scalar.hpp>
 #include <cudf/table/table.hpp>
 #include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
 
 #include <rmm/device_buffer.hpp>
 #include <rmm/resource_ref.hpp>
 
+#include <cuda/stream>
 #include <cuda_runtime.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <cstdio>
-#include <stdexcept>
+#include <memory>
+#include <optional>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 // The high-level JIT decode bridge is defined here alongside DecodeWalk because
 // buffer binding may recursively materialize entropy tails. Its low-level

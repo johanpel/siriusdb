@@ -1,26 +1,29 @@
 #include "api/simpatico_codegen.hpp"
-#include "codegen/jit/nvrtc_compiler.hpp"
-#include "codegen/plan/plan_interpreter.hpp"
 #include "codegen/plan/plan_tree.hpp"
 #include "codegen/util/stream_pool.hpp"
+#include "cuda_runtime_api.h"
 #include "test_utils.hpp"
 
+#include <cudf/column/column_factories.hpp>
 #include <cudf/copying.hpp>
 #include <cudf/null_mask.hpp>
 #include <cudf/table/table.hpp>
 #include <cudf/types.hpp>
+#include <cudf/utilities/default_stream.hpp>
 #include <cudf/utilities/memory_resource.hpp>
-#include <cudf/utilities/traits.hpp>
 
 #include <rmm/mr/cuda_async_memory_resource.hpp>
 #include <rmm/mr/per_device_resource.hpp>
 #include <rmm/resource_ref.hpp>
 
+#include <cuda_runtime_api.h>
+
 #include <algorithm>
-#include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
-#include <set>
+#include <exception>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <unordered_set>

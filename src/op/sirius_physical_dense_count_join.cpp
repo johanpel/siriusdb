@@ -16,11 +16,17 @@
 
 #include "op/sirius_physical_dense_count_join.hpp"
 
+#include "cucascade/data/data_batch.hpp"
 #include "cudf/cudf_utils.hpp"
 #include "data/data_batch_utils.hpp"
+#include "helper/logical_type.hpp"
 #include "log/logging.hpp"
 #include "memory/size_arithmetic.hpp"
 #include "op/aggregate/dense_count_join_impl.hpp"
+#include "op/partition_placement.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "op/sirius_physical_partition_consumer_operator.hpp"
 #include "pipeline/sirius_meta_pipeline.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 #include "sirius/exception.hpp"
@@ -28,7 +34,7 @@
 
 #include <cudf/aggregation.hpp>
 #include <cudf/binaryop.hpp>
-#include <cudf/column/column_factories.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/concatenate.hpp>
 #include <cudf/copying.hpp>
 #include <cudf/groupby.hpp>
@@ -36,18 +42,31 @@
 #include <cudf/null_mask.hpp>
 #include <cudf/replace.hpp>
 #include <cudf/scalar/scalar.hpp>
+#include <cudf/table/table.hpp>
 #include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
 #include <cudf/unary.hpp>
+#include <cudf/utilities/span.hpp>
 
 #include <rmm/aligned.hpp>
+#include <rmm/device_uvector.hpp>
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
 
 #include <cucascade/memory/memory_space.hpp>
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/vector.hpp>
 
 #include <algorithm>
 #include <atomic>
+#include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <memory>
+#include <mutex>
 #include <optional>
+#include <string>
 #include <string_view>
 #include <utility>
 #include <vector>

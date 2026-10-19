@@ -15,6 +15,9 @@
  */
 
 // sirius
+#include "expression/join_condition.hpp"
+#include "helper/logical_type.hpp"
+
 #include <expression/ast/aggregate.hpp>
 #include <expression/ast/between.hpp>
 #include <expression/ast/case_expr.hpp>
@@ -34,7 +37,6 @@
 // standard library
 #include <algorithm>
 #include <cstddef>
-#include <variant>
 
 // Single source of truth for "how many cuDF AST operators does this Sirius AST
 // alternative lower to, recursively." Drives the AST-vs-MATERIALIZE strategy

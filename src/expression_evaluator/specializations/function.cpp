@@ -15,12 +15,14 @@
  */
 
 // sirius
-#include <config.hpp>
+#include "expression/ast/constant.hpp"
+#include "expression/ast/function_call.hpp"
+#include "expression_evaluator/expression_evaluator_strategy.hpp"
+
 #include <expression/ast/node.hpp>
 #include <expression/date_trunc_unit.hpp>
 #include <expression/function_id.hpp>
 #include <expression/substring_slice.hpp>
-#include <expression/value.hpp>
 #include <expression_evaluator/ast_supported_types.hpp>
 #include <expression_evaluator/expression_evaluator.hpp>
 #include <expression_evaluator/like_multiliteral.hpp>
@@ -35,8 +37,11 @@
 #include <duckdb/common/assert.hpp>
 
 // cudf
+#include <cudf/ast/ast_operator.hpp>
+#include <cudf/ast/expressions.hpp>
 #include <cudf/binaryop.hpp>
 #include <cudf/column/column_factories.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/copying.hpp>
 #include <cudf/cudf_utils.hpp>
 #include <cudf/datetime.hpp>
@@ -52,6 +57,7 @@
 #include <cudf/strings/slice.hpp>
 #include <cudf/strings/strings_column_view.hpp>
 #include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
 #include <cudf/unary.hpp>
 #include <cudf/utilities/traits.hpp>
 
@@ -61,11 +67,14 @@
 // standard library
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
+#include <memory>
 #include <optional>
 #include <regex>
 #include <string>
+#include <string_view>
 #include <tuple>
-#include <variant>
+#include <utility>
 #include <vector>
 
 namespace sirius {

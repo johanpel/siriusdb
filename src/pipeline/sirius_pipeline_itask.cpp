@@ -16,8 +16,14 @@
 
 #include "pipeline/sirius_pipeline_itask.hpp"
 
+#include "log/logging.hpp"
+#include "parallel/task.hpp"
+#include "pipeline/sirius_pipeline_task_states.hpp"
+#include "telemetry-bridge/gen/quent.hpp"
 #include "telemetry/telemetry_context.hpp"
 
+#include <cstdint>
+#include <exception>
 #include <memory>
 #include <utility>
 

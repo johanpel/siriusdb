@@ -16,47 +16,54 @@
 
 #include "op/scan/duckdb_native_decoder.hpp"
 
+#include "cucascade/memory/common.hpp"
 #include "cuda/scan/gpu_decode_strings.cuh"
 #include "cuda/scan/gpu_native_decode.cuh"
+#include "cuda_runtime_api.h"
 #include "cudf/cudf_utils.hpp"
+#include "helper/logical_type.hpp"
 #include "helper/type_conversions.hpp"
 #include "io/io_context.hpp"
 #include "io/sirius_datasource.hpp"
 #include "io/types.hpp"
 #include "op/scan/duckdb_block_layout.hpp"
 #include "op/scan/duckdb_native_gpu_ingestible.hpp"
+#include "op/scan/duckdb_native_metadata.hpp"
 #include "sirius_context.hpp"
 #include "telemetry/nvtx.hpp"
 
 #include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/concatenate.hpp>
 #include <cudf/filling.hpp>
+#include <cudf/io/text/byte_range_info.hpp>
 #include <cudf/null_mask.hpp>
-#include <cudf/scalar/scalar_factories.hpp>
+#include <cudf/scalar/scalar.hpp>
 #include <cudf/table/table.hpp>
-#include <cudf/utilities/error.hpp>
-#include <cudf/utilities/span.hpp>
-#include <cudf/utilities/traits.hpp>
-#include <cudf/utilities/type_dispatcher.hpp>
+#include <cudf/types.hpp>
 
 #include <rmm/detail/error.hpp>
 #include <rmm/device_buffer.hpp>
+#include <rmm/resource_ref.hpp>
 
 #include <cuda/stream>
+#include <cuda_runtime_api.h>
 
 #include <cucascade/memory/fixed_size_host_memory_resource.hpp>
 #include <cucascade/memory/memory_reservation.hpp>
 #include <cucascade/memory/memory_reservation_manager.hpp>
 #include <cucascade/memory/memory_space.hpp>
+#include <duckdb/common/enums/compression_type.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
 #include <duckdb/common/types/validity_mask.hpp>
-#include <duckdb/common/types/vector.hpp>
 #include <duckdb/main/attached_database.hpp>
 #include <duckdb/main/database.hpp>
 #include <duckdb/storage/block_manager.hpp>
-#include <duckdb/storage/buffer/buffer_handle.hpp>
 #include <duckdb/storage/buffer_manager.hpp>
 #include <duckdb/storage/compression/roaring/roaring.hpp>
+#include <duckdb/storage/data_pointer.hpp>
 #include <duckdb/storage/single_file_block_manager.hpp>
 #include <duckdb/storage/statistics/base_statistics.hpp>
 #include <duckdb/storage/statistics/numeric_stats.hpp>
@@ -68,7 +75,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
-#include <future>
+#include <limits>
+#include <memory>
 #include <optional>
 #include <span>
 #include <stdexcept>

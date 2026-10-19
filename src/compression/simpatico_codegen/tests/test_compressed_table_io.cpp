@@ -8,22 +8,32 @@
 
 #include "api/compressed_table_io.hpp"
 #include "api/simpatico_codegen.hpp"
-#include "codegen/jit/nvrtc_compiler.hpp"
 #include "codegen/plan/leaf_desc.hpp"
+#include "codegen/plan/operator_registry.hpp"
+#include "codegen/util/stream_pool.hpp"
+#include "cuda_runtime_api.h"
 #include "test_utils.hpp"
 
 #include <cudf/table/table.hpp>
 #include <cudf/types.hpp>
 #include <cudf/utilities/default_stream.hpp>
 
-#include <cuda/stream>
+#include <rmm/mr/per_device_resource.hpp>
 
+#include <cuda/stream>
+#include <cuda_runtime_api.h>
+
+#include <stdlib.h>
 #include <unistd.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <exception>
 #include <fstream>
+#include <ios>
+#include <iterator>
 #include <optional>
 #include <span>
 #include <stdexcept>

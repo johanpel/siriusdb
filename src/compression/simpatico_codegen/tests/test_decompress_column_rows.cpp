@@ -17,19 +17,25 @@
 // are the interesting cases here.
 
 #include "api/simpatico_codegen.hpp"
+#include "codegen/jit/fused_tree.hpp"
 #include "codegen/selection/chunk_row_set.hpp"
+#include "cuda_runtime_api.h"
 #include "test_utils.hpp"
 
 #include <cudf/table/table.hpp>
 #include <cudf/types.hpp>
+#include <cudf/utilities/default_stream.hpp>
 
 #include <rmm/device_buffer.hpp>
 #include <rmm/mr/per_device_resource.hpp>
 
+#include <cuda/stream>
 #include <cuda_runtime.h>
 
 #include <cstdint>
 #include <cstdio>
+#include <exception>
+#include <stdexcept>
 #include <string>
 #include <vector>
 

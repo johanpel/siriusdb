@@ -17,33 +17,47 @@
 #include "pipeline/gpu_pipeline_executor.hpp"
 
 #include "creator/task_creator.hpp"
+#include "cucascade/memory/memory_space.hpp"
 #include "cucascade/memory/stream_pool.hpp"
 #include "cuda_runtime_api.h"
 #include "downgrade/downgrade_executor.hpp"
+#include "exec/channel.hpp"
+#include "exec/config.hpp"
+#include "exec/invocable.hpp"
 #include "exec/leased_callable.hpp"
+#include "exec/query_lifecycle_registry.hpp"
 #include "log/logging.hpp"
-#include "op/scan/table_scan/scan_contract.hpp"
 #include "op/sirius_physical_operator.hpp"
-#include "op/sirius_physical_operator_type.hpp"
+#include "parallel/task_executor.hpp"
 #include "pipeline/completion_handler.hpp"
+#include "pipeline/gpu_pipeline_task.hpp"
 #include "pipeline/oom_reschedule_exception.hpp"
+#include "pipeline/sirius_pipeline_itask.hpp"
+#include "pipeline/sirius_pipeline_task_states.hpp"
 #include "pipeline/task_request.hpp"
+#include "query_id.hpp"
 #include "telemetry-bridge/gen/quent.hpp"
 #include "telemetry/telemetry_context.hpp"
+#include "transparent/replay_admission.hpp"
 
 #include <rmm/cuda_device.hpp>
+
+#include <cuda/stream>
 
 #include <absl/cleanup/cleanup.h>
 #include <util/stream_check_wrapper.hpp>
 
-#include <algorithm>
 #include <atomic>
+#include <chrono>
+#include <cstddef>
 #include <cstdint>
 #include <exception>
 #include <format>
 #include <memory>
 #include <mutex>
+#include <stdexcept>
 #include <string>
+#include <thread>
 #include <utility>
 namespace sirius {
 namespace pipeline {

@@ -17,7 +17,19 @@
 #include "expression/ast/utils.hpp"
 
 // sirius
+#include "expression/ast/aggregate.hpp"
+#include "expression/ast/between.hpp"
+#include "expression/ast/case_expr.hpp"
+#include "expression/ast/cast.hpp"
+#include "expression/ast/coalesce.hpp"
+#include "expression/ast/comparison.hpp"
+#include "expression/ast/conjunction.hpp"
+#include "expression/ast/constant.hpp"
+#include "expression/ast/function_call.hpp"
+#include "expression/ast/in_list.hpp"
 #include "expression/ast/node.hpp"
+#include "expression/ast/reference.hpp"
+#include "expression/ast/unary_op.hpp"
 
 // standard library
 #include <algorithm>

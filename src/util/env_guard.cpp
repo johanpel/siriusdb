@@ -16,7 +16,11 @@
 
 #include "util/env_guard.hpp"
 
+#include <stdlib.h>
+
 #include <cstdlib>  // for ::setenv / ::unsetenv / ::getenv
+#include <optional>
+#include <string>
 #include <utility>
 
 namespace sirius {

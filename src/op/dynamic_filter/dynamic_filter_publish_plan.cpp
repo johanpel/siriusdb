@@ -18,12 +18,18 @@
 
 #include "log/logging.hpp"
 #include "op/dynamic_filter/dynamic_filter_key_domain.hpp"
+#include "op/dynamic_filter/dynamic_filter_replica_space.hpp"
+
+#include <cudf/types.hpp>
 
 #include <cucascade/memory/common.hpp>
 #include <cucascade/memory/memory_space.hpp>
 
 #include <algorithm>
+#include <cstddef>
 #include <stdexcept>
+#include <utility>
+#include <vector>
 
 namespace sirius::op {
 

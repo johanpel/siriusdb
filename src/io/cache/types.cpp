@@ -17,16 +17,22 @@
 
 #include "io/cache/types.hpp"
 
+#include "cucascade/memory/common.hpp"
 #include "cucascade/memory/fixed_size_host_memory_resource.hpp"
 #include "cucascade/memory/memory_reservation.hpp"
+#include "cucascade/memory/memory_reservation_manager.hpp"
 #include "cucascade/memory/memory_space.hpp"
 
 #include <rmm/aligned.hpp>
 
 #include <algorithm>
+#include <atomic>
 #include <cstddef>
-#include <cstdint>
+#include <exception>
+#include <span>
 #include <stdexcept>
+#include <utility>
+#include <vector>
 
 namespace sirius::io::cache {
 

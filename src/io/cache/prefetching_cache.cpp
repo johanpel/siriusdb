@@ -17,8 +17,13 @@
 #include "io/cache/prefetching_cache.hpp"
 
 #include "cuda/device_copy_batch.hpp"
+#include "cuda_runtime_api.h"
+#include "exec/completion_controller.hpp"
+#include "exec/cuda_event_completion_poll.hpp"
+#include "exec/invocable.hpp"
 #include "exec/semi_future.hpp"
 #include "exec/try.hpp"
+#include "io/cache/config.hpp"
 #include "io/cache/types.hpp"
 #include "io/io_context.hpp"
 #include "io/io_request.hpp"
@@ -33,9 +38,11 @@
 #include <cuda_runtime.h>
 
 #include <algorithm>
+#include <atomic>
 #include <cassert>
-#include <cmath>
 #include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <exception>
 #include <format>
 #include <latch>
@@ -46,8 +53,12 @@
 #include <shared_mutex>
 #include <span>
 #include <stdexcept>
+#include <stop_token>
 #include <string>
+#include <string_view>
+#include <thread>
 #include <type_traits>
+#include <unordered_map>
 #include <utility>
 #include <variant>
 #include <vector>

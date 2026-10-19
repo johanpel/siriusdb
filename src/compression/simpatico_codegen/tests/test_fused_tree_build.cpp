@@ -10,8 +10,10 @@
 #include "codegen/plan/plan_tree.hpp"
 
 #include <cstdio>
+#include <exception>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace {
 

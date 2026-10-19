@@ -16,13 +16,30 @@
 
 #include "op/sirius_physical_grouped_aggregate.hpp"
 
-#include "config.hpp"
-#include "data/data_batch_utils.hpp"
+#include "cucascade/data/data_batch.hpp"
+#include "expression/ast/node.hpp"
+#include "helper/logical_type.hpp"
 #include "op/aggregate/aggregate_op_util.hpp"
 #include "op/aggregate/gpu_aggregate_impl.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "telemetry/nvtx.hpp"
 
+#include <cuda/stream>
+
+#include <duckdb/common/enums/tuple_data_layout_enums.hpp>
+#include <duckdb/common/projection_index.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/parser/group_by_node.hpp>
+
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <stdexcept>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

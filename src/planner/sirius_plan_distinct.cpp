@@ -18,13 +18,21 @@
 #include "duckdb/common/exception.hpp"
 #include "duckdb/planner/expression/bound_reference_expression.hpp"
 #include "duckdb/planner/operator/logical_distinct.hpp"
-#include "duckdb/planner/operator/logical_projection.hpp"
 #include "expression/ast/node.hpp"
 #include "expression/ast/reference.hpp"
 #include "helper/type_conversions.hpp"
 #include "op/sirius_physical_grouped_aggregate.hpp"
+#include "op/sirius_physical_operator.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
 #include "planner/sirius_plan_projection_utils.hpp"
+
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/enums/logical_operator_type.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/planner/bound_result_modifier.hpp>
 
 #include <cstdint>
 #include <memory>

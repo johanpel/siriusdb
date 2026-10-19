@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
+#include "log/sink.hpp"
 #include "util/segfault_backtrace.hpp"
+
+#include <signal.h>
 
 // Pull in libc feature macros so __GLIBC__ is defined before we test it below.
 // Without a prior libc include, __GLIBC__ is undefined at the #if and the entire
 // implementation silently compiles to the no-op fallback (so the handler never
 // installs). <cstdlib> transitively includes <features.h> on glibc and is
 // harmless elsewhere.
+#include <cstdio>
 #include <cstdlib>
 
 #if defined(__linux__) && defined(__GLIBC__)

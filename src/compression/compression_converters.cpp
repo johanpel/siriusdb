@@ -18,21 +18,21 @@
 
 #include "compressed_representation.hpp"
 #include "compressed_scan.hpp"
-#include "device_compressed_blob.hpp"
+#include "cucascade/data/common.hpp"
 #include "telemetry/nvtx.hpp"
 
 #include <cudf/column/column.hpp>
 #include <cudf/null_mask.hpp>
 #include <cudf/table/table.hpp>
+#include <cudf/types.hpp>
 
 #include <rmm/device_buffer.hpp>
 #include <rmm/mr/per_device_resource.hpp>
 
-#include <cuda_runtime.h>
+#include <cuda/stream>
 
 #include <api/compressed_table_io.hpp>
 #include <api/simpatico_codegen.hpp>
-#include <codegen/util/stream_pool.hpp>
 #include <cucascade/cudf/gpu_data_representation.hpp>
 #include <cucascade/data/representation_converter.hpp>
 #include <cucascade/memory/memory_space.hpp>
@@ -41,6 +41,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <numeric>
 #include <optional>
 #include <span>

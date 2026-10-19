@@ -19,7 +19,6 @@
 
 #include "config.hpp"                                    // duckdb::Config::LOG_*
 #include "core_functions_extension.hpp"                  // duckdb::CoreFunctionsExtension
-#include "data/sirius_converter_registry.hpp"            // sirius::converter_registry
 #include "duckdb/common/enums/optimizer_type.hpp"        // duckdb::OptimizerType
 #include "duckdb/execution/column_binding_resolver.hpp"  // duckdb::ColumnBindingResolver
 #include "duckdb/main/client_context.hpp"                // duckdb::ClientContext
@@ -34,25 +33,45 @@
 #include "duckdb/parser/statement/relation_statement.hpp"  // duckdb::RelationStatement
 #include "duckdb/planner/planner.hpp"                      // duckdb::Planner
 #include "exec/arrow_result_stream.hpp"
+#include "exec/batch_stream.hpp"
 #include "exec/stream_bind_catalog.hpp"   // sirius::exec::stream_bind_catalog
 #include "exec/stream_plan_bindings.hpp"  // sirius::exec::register_stream_source_function
-#include "exec/streaming_fragment.hpp"    // sirius::exec::streaming_fragment, fragment_spec
-#include "from_substrait.hpp"             // duckdb::SubstraitToDuckDB (compiled into libsirius)
-#include "helper/type_conversions.hpp"    // sirius::from_duckdb
-#include "log/logging.hpp"                // SIRIUS_LOG_INFO
-#include "parquet_extension.hpp"          // duckdb::ParquetExtension
+#include "exec/stream_session.hpp"
+#include "exec/streaming_fragment.hpp"  // sirius::exec::streaming_fragment, fragment_spec
+#include "from_substrait.hpp"           // duckdb::SubstraitToDuckDB (compiled into libsirius)
+#include "helper/type_conversions.hpp"  // sirius::from_duckdb
+#include "log/logging.hpp"              // SIRIUS_LOG_INFO
+#include "op/sirius_physical_streaming_sink.hpp"
+#include "parquet_extension.hpp"  // duckdb::ParquetExtension
 #include "planner/unsupported_optimizers.hpp"
+#include "sirius/exception.hpp"
 #include "sirius/ffi.hpp"
 #include "sirius_config.hpp"   // sirius::sirius_config
 #include "sirius_context.hpp"  // duckdb::SiriusContext
 
+#include <duckdb/common/arrow/arrow.hpp>
+#include <duckdb/common/enums/set_scope.hpp>
+#include <duckdb/common/enums/statement_type.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/shared_ptr.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/types/value.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+
+#include <algorithm>
 #include <chrono>
+#include <cstdint>
 #include <cstdlib>
 #include <map>
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <ratio>
 #include <set>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace sirius::ffi {
 

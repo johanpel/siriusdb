@@ -16,14 +16,22 @@
 
 #include <cudf/cudf_utils.hpp>
 #include <cudf/table/table.hpp>
+#include <cudf/types.hpp>
+
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
 
 #include <log/logging.hpp>
 #include <op/scan/iceberg_delete_filter.hpp>
 #include <op/scan/iceberg_equality_delete_mask.hpp>
 #include <op/scan/iceberg_metadata_reader.hpp>
 
+#include <cstddef>
+#include <memory>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace sirius::op::scan {

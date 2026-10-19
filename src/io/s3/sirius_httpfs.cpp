@@ -17,14 +17,26 @@
 #include "io/s3/sirius_httpfs.hpp"
 
 #include "io/io_context.hpp"
+#include "io/rest/s3/list_parser.hpp"
 #include "io/s3/duckdb_secret_config.hpp"
 #include "io/sirius_datasource.hpp"
 #include "scan_manager/sirius_scan_manager.hpp"
 #include "sirius_context.hpp"
 
 #include <duckdb/common/exception.hpp>
+#include <duckdb/common/file_open_flags.hpp>
 #include <duckdb/common/file_opener.hpp>
+#include <duckdb/common/file_system.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/open_file_info.hpp>
+#include <duckdb/common/optional_ptr.hpp>
+#include <duckdb/common/shared_ptr.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/types/timestamp_base.hpp>
 #include <duckdb/common/types/value.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
 #include <duckdb/function/scalar/string_common.hpp>
 #include <duckdb/main/client_context.hpp>
 
@@ -36,6 +48,7 @@
 #include <memory>
 #include <optional>
 #include <stdexcept>
+#include <string>
 #include <string_view>
 #include <utility>
 #include <vector>

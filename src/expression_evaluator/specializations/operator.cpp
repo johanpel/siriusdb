@@ -15,33 +15,51 @@
  */
 
 // sirius
+#include "expression/ast/coalesce.hpp"
+#include "expression/ast/constant.hpp"
+#include "expression/ast/in_list.hpp"
+#include "expression/ast/unary_op.hpp"
+#include "expression_evaluator/expression_evaluator_strategy.hpp"
+
+#include <cuda/stream>
+#include <cuda_runtime_api.h>
+
 #include <expression/ast/node.hpp>
 #include <expression/value.hpp>
 #include <expression_evaluator/expression_evaluator.hpp>
-#include <helper/logical_type.hpp>
-#include <log/logging.hpp>
 #include <sirius/exception.hpp>
 
 // duckdb
 #include <duckdb/common/assert.hpp>
 
 // cudf
+#include <cudf/ast/ast_operator.hpp>
+#include <cudf/ast/expressions.hpp>
 #include <cudf/binaryop.hpp>
 #include <cudf/column/column.hpp>
-#include <cudf/cudf_utils.hpp>
+#include <cudf/column/column_factories.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/fixed_point/fixed_point.hpp>
 #include <cudf/null_mask.hpp>
+#include <cudf/replace.hpp>
 #include <cudf/search.hpp>
+#include <cudf/types.hpp>
 #include <cudf/unary.hpp>
+#include <cudf/utilities/error.hpp>
 #include <cudf/wrappers/timestamps.hpp>
 
 // rmm
 #include <rmm/device_uvector.hpp>
+#include <rmm/resource_ref.hpp>
 
 // standard library
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 #include <string>
-#include <variant>
+#include <utility>
+#include <vector>
 
 namespace {
 

@@ -16,13 +16,23 @@
 
 #include "late_mat/prepared_selection.hpp"
 
+#include "codegen/selection/chunk_row_set.hpp"
+#include "late_mat/column_origin.hpp"
 #include "telemetry/nvtx.hpp"
+
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
 
 #include <codegen/selection/row_id_space.hpp>
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <mutex>
 #include <stdexcept>
-#include <string>
 #include <utility>
+#include <vector>
 
 namespace sirius::late_mat {
 

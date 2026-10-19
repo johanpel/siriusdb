@@ -19,10 +19,17 @@
 #include "duckdb/logging/log_manager.hpp"
 #include "duckdb/logging/logger.hpp"
 #include "duckdb/main/database.hpp"
+#include "log/level.hpp"
+#include "log/sink.hpp"
+
+#include <duckdb/common/shared_ptr.hpp>
+#include <duckdb/logging/logging.hpp>
 
 #include <format>
 #include <memory>
+#include <source_location>
 #include <string_view>
+#include <utility>
 
 namespace sirius::log {
 

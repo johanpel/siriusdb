@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+#include "scan_manager/duckdb_mvcc_metadata.hpp"
+
 #include <cudf/types.hpp>
 #include <cudf/utilities/bit.hpp>
 
 #include <duckdb/common/enums/scan_options.hpp>
+#include <duckdb/common/typedefs.hpp>
 #include <duckdb/common/types/selection_vector.hpp>
 #include <duckdb/common/vector_size.hpp>
 #include <duckdb/function/partition_stats.hpp>
@@ -25,6 +28,7 @@
 #include <duckdb/storage/table/array_column_data.hpp>
 #include <duckdb/storage/table/column_data.hpp>
 #include <duckdb/storage/table/column_segment.hpp>
+#include <duckdb/storage/table/column_segment_tree.hpp>
 #include <duckdb/storage/table/row_group.hpp>
 #include <duckdb/storage/table/row_group_collection.hpp>
 #include <duckdb/storage/table/row_group_segment_tree.hpp>
@@ -33,6 +37,9 @@
 #include <op/scan/duckdb_mvcc_visibility.hpp>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <span>
 #include <stdexcept>
 #include <string>
 

@@ -16,10 +16,19 @@
 
 #include "arrow_result_stream.hpp"
 
+#include <duckdb/common/arrow/arrow.hpp>
 #include <duckdb/common/arrow/arrow_appender.hpp>
+#include <duckdb/common/arrow/arrow_converter.hpp>
 #include <duckdb/common/arrow/arrow_wrapper.hpp>
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/identifier.hpp>
+#include <duckdb/common/shared_ptr.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types/data_chunk.hpp>
+#include <duckdb/common/unique_ptr.hpp>
 #include <duckdb/function/table/arrow/arrow_duck_schema.hpp>
 #include <duckdb/main/client_context.hpp>
+#include <duckdb/main/query_result.hpp>
 
 #include <algorithm>
 #include <cerrno>

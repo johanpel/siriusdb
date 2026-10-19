@@ -10,6 +10,8 @@
 #include "op/scan/parquet_gpu_ingestible.hpp"
 #include "sirius/exception.hpp"
 
+#include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <optional>
 #include <string>

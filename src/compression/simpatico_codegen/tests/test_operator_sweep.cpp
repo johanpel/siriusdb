@@ -61,13 +61,12 @@
 
 #include "api/simpatico_codegen.hpp"
 #include "codegen/jit/kernel_cache.hpp"
-#include "codegen/jit/nvrtc_compiler.hpp"
 #include "codegen/plan/operator_registry.hpp"
+#include "cuda_runtime_api.h"
 #include "explore/compression_explorer.hpp"
 #include "test_utils.hpp"
 
 #include <cudf/column/column_factories.hpp>
-#include <cudf/strings/strings_column_view.hpp>
 #include <cudf/table/table.hpp>
 #include <cudf/table/table_view.hpp>
 #include <cudf/types.hpp>
@@ -81,20 +80,26 @@
 #include <cuda/stream>
 #include <cuda_runtime.h>
 
+#include <sched.h>
 #include <spawn.h>
+#include <stdlib.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <algorithm>
 #include <array>
 #include <cerrno>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <exception>
+#include <initializer_list>
 #include <memory>
-#include <numeric>
 #include <optional>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <thread>
 #include <utility>

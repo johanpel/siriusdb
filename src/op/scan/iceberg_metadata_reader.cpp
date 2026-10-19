@@ -15,22 +15,28 @@
  */
 
 #include "io/io_context.hpp"
-#include "io/types.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
 
 #include <cudf/concatenate.hpp>
 #include <cudf/io/datasource.hpp>
 #include <cudf/io/parquet.hpp>
 #include <cudf/io/parquet_metadata.hpp>
+#include <cudf/io/parquet_schema.hpp>
+#include <cudf/join/distinct_hash_join.hpp>
 #include <cudf/stream_compaction.hpp>
 #include <cudf/types.hpp>
 #include <cudf/utilities/default_stream.hpp>
 
-#include <duckdb/common/types/vector.hpp>
+#include <cuda/stream>
+
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types/string_type.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector/unified_vector_format.hpp>
 #include <duckdb/main/client_context.hpp>
 #include <duckdb/main/connection.hpp>
 #include <duckdb/main/query_result_stream.hpp>
 #include <duckdb/transaction/meta_transaction.hpp>
-#include <io/sirius_datasource.hpp>
 #include <io/uri_parser.hpp>
 #include <log/logging.hpp>
 #include <op/scan/iceberg_metadata_connection.hpp>
@@ -40,14 +46,20 @@
 
 #include <algorithm>
 #include <atomic>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
 #include <map>
-#include <mutex>
+#include <memory>
 #include <numeric>
+#include <optional>
 #include <set>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 namespace sirius::op::scan {

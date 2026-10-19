@@ -15,18 +15,36 @@
  */
 
 #include "duckdb/common/assert.hpp"
+#include "expression/ast/aggregate.hpp"
+#include "expression/ast/between.hpp"
+#include "expression/ast/case_expr.hpp"
+#include "expression/ast/cast.hpp"
+#include "expression/ast/coalesce.hpp"
+#include "expression/ast/comparison.hpp"
+#include "expression/ast/conjunction.hpp"
+#include "expression/ast/constant.hpp"
 #include "expression/ast/constant_range.hpp"
+#include "expression/ast/function_call.hpp"
+#include "expression/ast/in_list.hpp"
 #include "expression/ast/node.hpp"
+#include "expression/ast/reference.hpp"
+#include "expression/ast/unary_op.hpp"
 #include "expression/ast/utils.hpp"
-#include "helper/numeric_narrowing.hpp"
 #include "op/sirius_physical_delim_join.hpp"
 #include "op/sirius_physical_dense_count_join.hpp"
 #include "op/sirius_physical_filter.hpp"
 #include "op/sirius_physical_grouped_aggregate.hpp"
 #include "op/sirius_physical_hash_join.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_projection.hpp"
 #include "op/sirius_physical_table_scan.hpp"
 #include "planner/sirius_plan_compressed_schema.hpp"
+
+#include <cudf/aggregation.hpp>
+#include <cudf/types.hpp>
+
+#include <duckdb/common/enums/join_type.hpp>
 
 #include <cstddef>
 #include <initializer_list>

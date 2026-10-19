@@ -24,11 +24,14 @@
 #include <array>
 #include <cctype>
 #include <chrono>
-#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <ctime>
 #include <stdexcept>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 namespace sirius::io::rest::s3 {
 

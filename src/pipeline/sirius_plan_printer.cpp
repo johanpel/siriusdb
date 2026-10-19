@@ -19,14 +19,20 @@
 #include "duckdb/common/enums/join_type.hpp"
 #include "op/sirius_physical_hash_join.hpp"
 #include "op/sirius_physical_nested_loop_join.hpp"
+#include "op/sirius_physical_operator.hpp"
 #include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_table_scan.hpp"
 
 #include <algorithm>
+#include <cstddef>
 #include <map>
+#include <memory>
 #include <optional>
 #include <set>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace sirius::pipeline {
 

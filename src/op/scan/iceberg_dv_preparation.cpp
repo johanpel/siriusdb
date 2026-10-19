@@ -16,7 +16,10 @@
 
 #include "op/scan/iceberg_dv_preparation.hpp"
 
+#include "op/scan/iceberg_metadata_reader.hpp"
 #include "op/scan/puffin_reader.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
+#include "scan_manager/preparation_ledger.hpp"
 #include "yyjson.hpp"
 
 #include <duckdb/common/exception.hpp>
@@ -25,7 +28,13 @@
 #include <cstdint>
 #include <cstring>
 #include <limits>
-#include <new>
+#include <memory>
+#include <span>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 namespace sirius::op::scan {
 namespace {

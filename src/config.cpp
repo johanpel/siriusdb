@@ -16,7 +16,8 @@
 
 #include "config.hpp"
 
-#include "log/logging.hpp"
+#include <cstdint>
+#include <string>
 
 namespace duckdb {
 

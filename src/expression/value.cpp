@@ -16,13 +16,13 @@
 
 #include "expression/value.hpp"
 
+#include "helper/logical_type.hpp"
 #include "helper/type_conversions.hpp"
 #include "sirius/exception.hpp"
 
 // duckdb
+#include <duckdb/common/hugeint.hpp>
 #include <duckdb/common/types/date.hpp>
-#include <duckdb/common/types/decimal.hpp>
-#include <duckdb/common/types/hugeint.hpp>
 #include <duckdb/common/types/timestamp.hpp>
 #include <duckdb/common/types/value.hpp>
 

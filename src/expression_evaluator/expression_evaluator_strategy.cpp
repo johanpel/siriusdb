@@ -19,6 +19,7 @@
 
 // standard library
 #include <cassert>
+#include <string_view>
 
 namespace sirius {
 

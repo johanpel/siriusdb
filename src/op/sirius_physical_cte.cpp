@@ -19,9 +19,25 @@
 
 #include "op/sirius_physical_cte.hpp"
 
+#include "helper/logical_type.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "pipeline/sirius_meta_pipeline.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 #include "telemetry/nvtx.hpp"
+
+#include <cuda/stream>
+
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/pair.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <cstddef>
+#include <memory>
+#include <string>
+#include <utility>
 
 namespace sirius {
 namespace op {

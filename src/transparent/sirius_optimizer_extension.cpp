@@ -21,13 +21,20 @@
 #include "sirius_context.hpp"
 #include "transparent/connection_provenance.hpp"
 
-#include <duckdb/common/enums/optimizer_type.hpp>
-#include <duckdb/common/multi_file/multi_file_states.hpp>
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/enums/logical_operator_type.hpp>
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/table_index.hpp>
 #include <duckdb/common/types/value.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
 #include <duckdb/main/client_context.hpp>
 #include <duckdb/main/config.hpp>
 #include <duckdb/optimizer/optimizer.hpp>
+#include <duckdb/optimizer/optimizer_extension.hpp>
 #include <duckdb/planner/binder.hpp>
+#include <duckdb/planner/expression.hpp>
 #include <duckdb/planner/expression/bound_columnref_expression.hpp>
 #include <duckdb/planner/expression/bound_conjunction_expression.hpp>
 #include <duckdb/planner/expression_iterator.hpp>

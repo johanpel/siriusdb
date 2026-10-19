@@ -15,13 +15,26 @@
  */
 
 // sirius
+#include "cucascade/memory/column_metadata.hpp"
+#include "helper/logical_type.hpp"
+
+#include <cudf/types.hpp>
+
+#include <duckdb/common/enums/vector_type.hpp>
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/types/data_chunk.hpp>
+#include <duckdb/common/types/string_type.hpp>
+#include <duckdb/common/types/validity_mask.hpp>
+#include <duckdb/common/types/vector.hpp>
+#include <duckdb/common/vector.hpp>
 #include <helper/type_conversions.hpp>
 #include <helper/utils.hpp>
 #include <op/result/host_table_chunk_reader.hpp>
 
 // cucascade
 #include <cucascade/cudf/host_data_representation.hpp>
-#include <cucascade/memory/fixed_size_host_memory_resource.hpp>
 
 // duckdb
 #include <duckdb/common/types/decimal.hpp>
@@ -37,6 +50,11 @@
 
 // standard library
 #include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <stdexcept>
 
 namespace sirius::op::result {
 

@@ -16,6 +16,11 @@
 
 #include "pipeline/task_request.hpp"
 
+#include <atomic>
+#include <cstddef>
+#include <memory>
+#include <utility>
+
 namespace sirius {
 namespace pipeline {
 

@@ -16,19 +16,30 @@
 
 #include "io/rest/rest_ioctx.hpp"
 
+#include "io/io_context.hpp"
+#include "io/rest/rest_reactor.hpp"
+#include "io/rest/s3/list_parser.hpp"
 #include "io/rest/s3/sigv4.hpp"
+#include "io/templated_ioctx.hpp"
+#include "io/types.hpp"
 #include "io/uri_parser.hpp"
 #include "log/logging.hpp"
 
 #include <algorithm>
 #include <cctype>
+#include <chrono>
 #include <cstddef>
+#include <cstdint>
 #include <format>
+#include <functional>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <stdexcept>
+#include <string>
 #include <string_view>
 #include <utility>
+#include <vector>
 
 namespace sirius::io::rest {
 

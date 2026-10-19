@@ -16,22 +16,30 @@
 
 #include "telemetry/telemetry_context.hpp"
 
+#include "cucascade/memory/common.hpp"
+#include "cucascade/memory/memory_reservation_manager.hpp"
 #include "log/logging.hpp"
 #include "op/sirius_physical_delim_join.hpp"
 #include "op/sirius_physical_operator.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 #include "sirius_config.hpp"
 #include "telemetry-bridge/gen/quent.hpp"
+#include "telemetry/memory_context.hpp"
 #include "telemetry/nvtx_injection.hpp"
 
 #include <unistd.h>
 
+#include <cstdint>
 #include <format>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <ranges>
 #include <stdexcept>
 #include <string>
+#include <string_view>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace sirius::telemetry {

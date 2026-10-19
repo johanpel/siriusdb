@@ -16,6 +16,8 @@
 
 #include "op/aggregate/group_key_labels.hpp"
 
+#include <cudf/aggregation.hpp>
+#include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
 #include <cudf/join/distinct_hash_join.hpp>
 #include <cudf/null_mask.hpp>
@@ -23,10 +25,15 @@
 #include <cudf/scalar/scalar.hpp>
 #include <cudf/sorting.hpp>
 #include <cudf/stream_compaction.hpp>
+#include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
 #include <cudf/utilities/error.hpp>
 
-#include <rmm/device_buffer.hpp>
+#include <rmm/resource_ref.hpp>
 
+#include <cuda/stream>
+
+#include <memory>
 #include <numeric>
 #include <stdexcept>
 #include <utility>

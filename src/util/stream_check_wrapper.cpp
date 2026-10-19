@@ -18,6 +18,7 @@
 
 #include <dlfcn.h>
 
+#include <cstdlib>
 #include <iostream>
 #include <mutex>
 

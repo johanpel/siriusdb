@@ -16,6 +16,9 @@
 
 #include "data/spill_chunked_converters.hpp"
 
+#include "cucascade/data/common.hpp"
+#include "cucascade/data/representation_converter.hpp"
+#include "cuda_runtime_api.h"
 #include "data/chunked_spill_copy.hpp"
 #include "log/logging.hpp"
 
@@ -23,11 +26,11 @@
 #include <cudf/null_mask.hpp>
 #include <cudf/strings/strings_column_view.hpp>
 #include <cudf/table/table_view.hpp>
-#include <cudf/utilities/traits.hpp>
-#include <cudf/utilities/type_dispatcher.hpp>
+#include <cudf/types.hpp>
 
 #include <rmm/detail/error.hpp>
 
+#include <cuda/stream>
 #include <cuda_runtime.h>
 #include <nvtx3/nvtx3.hpp>
 
@@ -40,8 +43,13 @@
 #include <cucascade/memory/fixed_size_host_memory_resource.hpp>
 #include <cucascade/memory/memory_space.hpp>
 
+#include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
+#include <memory>
+#include <span>
+#include <utility>
 #include <vector>
 
 namespace sirius {

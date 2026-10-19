@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "cucascade/memory/common.hpp"
 #include "duckdb/catalog/catalog.hpp"
 #include "duckdb/catalog/catalog_entry/aggregate_function_catalog_entry.hpp"
 #include "duckdb/execution/operator/aggregate/physical_hash_aggregate.hpp"
@@ -35,20 +36,49 @@
 #include "memory/size_arithmetic.hpp"
 #include "op/sirius_physical_dense_count_join.hpp"
 #include "op/sirius_physical_grouped_aggregate.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_projection.hpp"
 #include "op/sirius_physical_table_scan.hpp"
 #include "op/sirius_physical_ungrouped_aggregate.hpp"
 #include "planner/decimal_sum_input_bounds.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
 #include "planner/sirius_plan_projection_utils.hpp"
-#include "sirius/exception.hpp"
+#include "sirius_config.hpp"
 #include "sirius_context.hpp"
 
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/constants.hpp>
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/enums/join_type.hpp>
+#include <duckdb/common/enums/logical_operator_type.hpp>
+#include <duckdb/common/enums/tuple_data_layout_enums.hpp>
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/hugeint.hpp>
+#include <duckdb/common/limits.hpp>
+#include <duckdb/common/numeric_utils.hpp>
+#include <duckdb/common/optional_ptr.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/types/hugeint.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/function/partition_stats.hpp>
+#include <duckdb/function/table_function.hpp>
+#include <duckdb/parser/group_by_node.hpp>
+#include <duckdb/storage/statistics/base_statistics.hpp>
+#include <duckdb/storage/statistics/numeric_stats.hpp>
+
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <limits>
 #include <memory>
 #include <optional>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace sirius::planner {
 

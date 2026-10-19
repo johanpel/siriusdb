@@ -16,9 +16,20 @@
 
 #include "event/query_event_publisher.hpp"
 
+#include "event/event.hpp"
+#include "exec/queue_priority.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "query_id.hpp"
+
 #include <algorithm>
-#include <ranges>
+#include <atomic>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <mutex>
+#include <span>
 #include <utility>
+#include <vector>
 
 namespace sirius::event {
 

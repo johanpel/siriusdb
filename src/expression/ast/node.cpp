@@ -21,6 +21,10 @@
 
 #include "expression/ast/node.hpp"
 
+#include "expression/ast/aggregate.hpp"
+#include "expression/ast/function_call.hpp"
+#include "expression/ast/reference.hpp"
+#include "helper/logical_type.hpp"
 #include "sirius/exception.hpp"
 
 #include <cstddef>

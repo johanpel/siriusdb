@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+#include <cudf/types.hpp>
+
+#include <duckdb/common/enums/join_type.hpp>
+#include <duckdb/common/unique_ptr.hpp>
 #include <expression/ast/node.hpp>
 #include <op/sirius_physical_filter.hpp>
 #include <op/sirius_physical_grouped_aggregate.hpp>
@@ -24,7 +28,11 @@
 #include <planner/dynamic_filter/dynamic_filter_target_discovery.hpp>
 
 #include <cassert>
+#include <cstddef>
+#include <optional>
+#include <utility>
 #include <variant>
+#include <vector>
 
 namespace sirius::planner {
 

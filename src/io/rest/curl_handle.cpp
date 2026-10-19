@@ -16,6 +16,10 @@
 
 #include "io/rest/curl_handle.hpp"
 
+#include <curl/curl.h>
+
+#include <cstddef>
+#include <mutex>
 #include <stdexcept>
 
 namespace sirius::io::rest {

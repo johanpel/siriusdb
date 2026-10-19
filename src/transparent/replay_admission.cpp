@@ -21,11 +21,17 @@
 #include "op/scan/table_scan/scan_contract.hpp"
 
 #include <duckdb/common/exception.hpp>
+#include <duckdb/common/types/value.hpp>
 #include <duckdb/main/client_context.hpp>
 #include <duckdb/transaction/meta_transaction.hpp>
 #include <duckdb/transaction/transaction_context.hpp>
 
+#include <cstdint>
 #include <cstdlib>
+#include <exception>
+#include <memory>
+#include <optional>
+#include <string_view>
 
 namespace sirius::transparent {
 late_failure_trace::~late_failure_trace() noexcept

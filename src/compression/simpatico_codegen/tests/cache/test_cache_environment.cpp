@@ -1,10 +1,12 @@
 #include "codegen/jit/cccl_embedded_headers.h"
 #include "codegen/jit/embedded_headers.h"
+#include "jit/cache_identity.hpp"
 #include "jit/compilation_request.hpp"
 
 #include <nvrtc.h>
 
 #include <cstdio>
+#include <exception>
 #include <stdexcept>
 #include <string>
 

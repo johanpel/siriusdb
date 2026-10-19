@@ -15,18 +15,24 @@
  */
 
 // sirius
-#include <expression/ast/node.hpp>
+#include "expression/ast/comparison.hpp"
+
+#include "expression_evaluator/expression_evaluator_strategy.hpp"
+
 #include <expression/join_condition.hpp>
 #include <expression_evaluator/expression_evaluator.hpp>
 #include <sirius/exception.hpp>
 
 // cudf
 #include <cudf/ast/ast_operator.hpp>
+#include <cudf/ast/expressions.hpp>
 #include <cudf/binaryop.hpp>
-#include <cudf/scalar/scalar.hpp>
+#include <cudf/column/column.hpp>
+#include <cudf/types.hpp>
 
 // standard library
 #include <memory>
+#include <utility>
 
 namespace sirius {
 using evaluate_result = expression_evaluator::evaluate_result;

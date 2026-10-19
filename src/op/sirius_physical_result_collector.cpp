@@ -15,9 +15,15 @@
  */
 
 // sirius
-#include <config.hpp>
 #include <data/data_batch_utils.hpp>
 #include <data/sirius_converter_registry.hpp>
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/types/column/column_data_collection.hpp>
+#include <duckdb/common/types/column/column_data_scan_states.hpp>
+#include <duckdb/common/types/data_chunk.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
 #include <helper/type_conversions.hpp>
 #include <op/result/host_table_chunk_reader.hpp>
 #include <op/sirius_physical_result_collector.hpp>
@@ -30,10 +36,17 @@
 #include <cucascade/cudf/host_data_representation.hpp>
 #include <cucascade/data/data_batch.hpp>
 #include <cucascade/memory/common.hpp>
-#include <cucascade/memory/memory_reservation_manager.hpp>
 
 // sirius exceptions
+#include "helper/logical_type.hpp"
+#include "log/logging.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "sirius/exception.hpp"
+#include "sirius_context.hpp"
+#include "telemetry/data_batch_probe.hpp"
+
+#include <cuda/stream>
 
 // duckdb
 #include <duckdb/main/prepared_statement_data.hpp>
@@ -42,6 +55,10 @@
 // standard library
 #include <algorithm>
 #include <cassert>
+#include <memory>
+#include <mutex>
+#include <optional>
+#include <utility>
 
 namespace sirius {
 namespace op {

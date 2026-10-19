@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+#include <duckdb/main/extension/extension_loader.hpp>
+
+#include <string>
 #define DUCKDB_EXTENSION_MAIN
 
 #include "sirius/duckdb.hpp"

@@ -28,14 +28,17 @@
 // longer than the capped grid must be covered by the grid-stride loop.
 
 #include "codegen/selection/selection.hpp"
+#include "cuda_runtime_api.h"
 
 #include <rmm/mr/per_device_resource.hpp>
 
 #include <cuda/stream>
 #include <cuda_runtime.h>
 
+#include <algorithm>
 #include <cstdint>
 #include <cstdio>
+#include <exception>
 #include <vector>
 
 using sirius::codegen::selection_mask;

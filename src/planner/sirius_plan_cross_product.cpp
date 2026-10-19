@@ -16,10 +16,20 @@
 
 #include "duckdb/main/client_context.hpp"
 #include "duckdb/planner/operator/logical_cross_product.hpp"
+#include "expression/join_condition.hpp"
 #include "memory/size_arithmetic.hpp"
 #include "op/sirius_physical_nested_loop_join.hpp"
+#include "op/sirius_physical_operator.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
 #include "sirius_context.hpp"
+
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/enums/join_type.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <utility>
 
 namespace sirius::planner {
 

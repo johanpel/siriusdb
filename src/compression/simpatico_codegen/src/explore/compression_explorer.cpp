@@ -12,28 +12,39 @@
 #include "codegen/plan/bitjoin_layout.hpp"     // copy_column_view
 #include "codegen/plan/operator_registry.hpp"  // is_terminal_compressor
 #include "codegen/plan/plan_interpreter.hpp"
+#include "codegen/plan/plan_tree.hpp"
 #include "codegen/plan/representation.hpp"
+#include "cuda_runtime_api.h"
 
+#include <cudf/column/column.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/copying.hpp>
 #include <cudf/strings/strings_column_view.hpp>
-#include <cudf/utilities/default_stream.hpp>
+#include <cudf/types.hpp>
 #include <cudf/utilities/traits.hpp>
 
-#include <rmm/mr/per_device_resource.hpp>
+#include <rmm/resource_ref.hpp>
 
+#include <cuda/stream>
 #include <cuda_runtime.h>
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
 #include <iomanip>
 #include <iostream>
 #include <limits>
 #include <memory>
 #include <numeric>
 #include <sstream>
+#include <string>
 #include <string_view>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
+#include <vector>
 
 namespace simpatico {
 namespace {

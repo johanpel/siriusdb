@@ -16,22 +16,32 @@
 
 #include "op/scan/duckdb_native_gpu_ingestible.hpp"
 
+#include "expression_evaluator/like_multiliteral.hpp"
+#include "expression_evaluator/query_policy.hpp"
+#include "op/scan/batch_coalescer.hpp"
+#include "op/scan/duckdb_native_metadata.hpp"
+#include "op/scan/gpu_ingestible_types.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
 #include "transparent/replay_admission.hpp"
+
+#include <cuda/stream>
 
 // sirius
 #include "op/scan/owning_table_view.hpp"
 
+#include <duckdb/common/enums/compression_type.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types/value.hpp>
+#include <duckdb/common/vector.hpp>
 #include <expression/ast/from_duckdb.hpp>
 #include <expression_evaluator/expression_evaluator.hpp>
 #include <helper/utils.hpp>
 #include <io/io_context.hpp>
 #include <io/sirius_datasource.hpp>
 #include <log/logging.hpp>
-#include <op/dynamic_filter/sirius_dynamic_filter.hpp>
 #include <op/scan/duckdb_native_decoder.hpp>
 #include <op/scan/scan_plan.hpp>
 #include <op/scan/scan_utils.hpp>
-#include <op/scan/sirius_gpu_scan_operator_data.hpp>
 #include <sirius_context.hpp>
 
 // duckdb
@@ -42,18 +52,26 @@
 // cudf
 #include <cudf/table/table.hpp>
 #include <cudf/types.hpp>
-#include <cudf/utilities/memory_resource.hpp>
+
+#include <rmm/resource_ref.hpp>
 
 // cucascade
 #include <cucascade/memory/memory_space.hpp>
 
 // standard library
 #include <algorithm>
+#include <atomic>
 #include <cstddef>
+#include <cstdint>
 #include <cstdlib>
+#include <limits>
 #include <memory>
+#include <mutex>
 #include <numeric>
+#include <optional>
+#include <span>
 #include <stdexcept>
+#include <string>
 #include <utility>
 #include <vector>
 

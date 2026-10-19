@@ -15,7 +15,11 @@
  */
 
 #include "duckdb/planner/operator/logical_column_data_get.hpp"
+#include "op/sirius_physical_operator.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
+
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/unique_ptr.hpp>
 
 namespace sirius::planner {
 

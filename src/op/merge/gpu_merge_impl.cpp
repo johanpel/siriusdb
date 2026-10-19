@@ -16,17 +16,37 @@
 
 #include "op/merge/gpu_merge_impl.hpp"
 
+#include "cucascade/data/data_batch.hpp"
+#include "cucascade/memory/memory_space.hpp"
 #include "data/data_batch_utils.hpp"
 #include "log/logging.hpp"
 #include "op/aggregate/stddev.hpp"
+#include "telemetry/data_batch_probe.hpp"
 
 #include <cudf/aggregation.hpp>
+#include <cudf/column/column.hpp>
+#include <cudf/column/column_factories.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/concatenate.hpp>
 #include <cudf/dictionary/dictionary_column_view.hpp>
 #include <cudf/dictionary/encode.hpp>
+#include <cudf/groupby.hpp>
 #include <cudf/merge.hpp>
+#include <cudf/reduction.hpp>
 #include <cudf/reduction/approx_distinct_count.hpp>
 #include <cudf/strings/strings_column_view.hpp>
+#include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
+
+#include <cuda/stream>
+
+#include <cstddef>
+#include <memory>
+#include <optional>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

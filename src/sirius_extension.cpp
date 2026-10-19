@@ -15,33 +15,64 @@
  */
 
 #include "config.hpp"
-#include "data/data_batch_utils.hpp"
 #include "duckdb/common/file_system.hpp"
 #include "duckdb/common/open_file_info.hpp"
 #include "duckdb/main/database.hpp"
+#include "event/event.hpp"
 #include "expression_evaluator/expression_evaluator_strategy.hpp"
+#include "log/level.hpp"
+#include "log/sink.hpp"
+#include "op/scan/duckdb_native_metadata.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
+#include "query_id.hpp"
+#include "scan_manager/duckdb_mvcc_metadata.hpp"
 #include "telemetry/nvtx.hpp"
-
-#include <cudf/io/parquet.hpp>
-#include <cudf/io/types.hpp>
+#include "transparent/replay_admission.hpp"
 
 #include <rmm/cuda_device.hpp>
 #include <rmm/cuda_stream.hpp>
 
 #include <absl/cleanup/cleanup.h>
-#include <cucascade/cudf/gpu_data_representation.hpp>
 #include <cucascade/cudf/host_data_representation.hpp>
 #include <cucascade/data/data_batch.hpp>
 #include <cucascade/memory/common.hpp>
 #include <cucascade/memory/memory_reservation.hpp>
 #include <cucascade/memory/memory_space.hpp>
 #include <cucascade/memory/reservation_aware_resource_adaptor.hpp>
+#include <cuvs/distance/distance.hpp>
+#include <duckdb/catalog/catalog_transaction.hpp>
+#include <duckdb/common/column_index.hpp>
+#include <duckdb/common/enums/catalog_type.hpp>
+#include <duckdb/common/enums/optimizer_type.hpp>
+#include <duckdb/common/enums/prepared_statement_mode.hpp>
+#include <duckdb/common/enums/set_scope.hpp>
+#include <duckdb/common/enums/statement_type.hpp>
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/exception/binder_exception.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/identifier.hpp>
+#include <duckdb/common/string.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/types/data_chunk.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/function/function.hpp>
+#include <duckdb/storage/statistics/node_statistics.hpp>
+
+#include <cctype>
+#include <exception>
+#include <memory>
+#include <mutex>
+#include <optional>
+#include <stdexcept>
+#include <string>
+#include <system_error>
+#include <vector>
 
 // Forward-declare CUDA profiler API functions (linked via libcudart).
 extern "C" int cudaProfilerStart();
 extern "C" int cudaProfilerStop();
-#include "compression/compressed_representation.hpp"
-#include "compression/compression_converters.hpp"
 #include "compression/plan_utils.hpp"
 #include "duckdb/catalog/catalog.hpp"
 #include "duckdb/catalog/catalog_entry/duck_table_entry.hpp"
@@ -81,12 +112,6 @@ extern "C" int cudaProfilerStop();
 #include "transparent/sirius_optimizer_extension.hpp"
 
 #include <cudf/types.hpp>
-#include <cudf/utilities/traits.hpp>
-
-#include <rmm/mr/per_device_resource.hpp>
-
-#include <api/compressed_table_io.hpp>
-#include <api/simpatico_codegen.hpp>
 
 #include <array>
 #include <chrono>
@@ -118,9 +143,6 @@ extern "C" int cudaProfilerStop();
 #include "vss/pinned_column.hpp"
 #include "vss/vector_search.hpp"
 
-#include <cudf/utilities/default_stream.hpp>
-#include <cudf/utilities/memory_resource.hpp>
-
 // PinTableFunction routes parquet reads through the scan manager's ioctx
 // instead of cudf's bundled file_source factory (which uses kvikio internally
 // and binds to a single CUDA context). This is mandatory in multi-GPU
@@ -135,11 +157,7 @@ extern "C" int cudaProfilerStop();
 // connection_manager). All consumers of blockingconcurrentqueue.h must
 // precede this include.
 #include "io/s3/duckdb_secret_config.hpp"
-#include "io/s3/sirius_httpfs.hpp"     // sirius::io::s3::sirius_httpfs
-#include "io/types.hpp"                // sirius::io::ioctx
-#include "io/uring/uring_reactor.hpp"  // sirius::io::uring_io_object
-
-#include <dlfcn.h>
+#include "io/s3/sirius_httpfs.hpp"  // sirius::io::s3::sirius_httpfs
 
 #include <algorithm>
 #include <cmath>

@@ -16,25 +16,43 @@
 
 #include "planner/late_mat_plan_pass.hpp"
 
+#include "expression/ast/cast.hpp"
 #include "expression/ast/node.hpp"
+#include "expression/ast/reference.hpp"
 #include "expression/ast/utils.hpp"
-#include "op/sirius_physical_concat.hpp"
+#include "expression/join_condition.hpp"
+#include "helper/logical_type.hpp"
+#include "late_mat/defer_directive.hpp"
+#include "late_mat/defer_policy.hpp"
 #include "op/sirius_physical_filter.hpp"
 #include "op/sirius_physical_grouped_aggregate.hpp"
 #include "op/sirius_physical_grouped_aggregate_merge.hpp"
 #include "op/sirius_physical_hash_join.hpp"
 #include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_partition.hpp"
 #include "op/sirius_physical_projection.hpp"
 #include "op/sirius_physical_top_n.hpp"
 #include "op/sirius_physical_top_n_merge.hpp"
 
+#include <cudf/aggregation.hpp>
+
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/enums/join_type.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/planner/bound_result_modifier.hpp>
 #include <duckdb/planner/expression/bound_reference_expression.hpp>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <iterator>
 #include <optional>
 #include <string>
+#include <type_traits>
+#include <utility>
 #include <variant>
+#include <vector>
 
 namespace sirius::planner {
 

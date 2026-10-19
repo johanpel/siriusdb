@@ -38,7 +38,10 @@
 #include "codegen/decode/masked_launch.hpp"
 #include "codegen/jit/fused_tree.hpp"
 #include "codegen/jit/nvrtc_compiler.hpp"
+#include "codegen/selection/chunk_row_set.hpp"
 #include "codegen/selection/selection.hpp"
+#include "cuda.h"
+#include "cuda_runtime_api.h"
 #include "gpu_encode.hpp"
 
 #include <cuda/stream>
@@ -47,6 +50,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstdio>
+#include <exception>
 #include <initializer_list>
 #include <limits>
 #include <string>

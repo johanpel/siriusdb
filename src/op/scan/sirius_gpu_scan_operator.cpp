@@ -15,10 +15,22 @@
  */
 
 // sirius
+#include "event/event.hpp"
+#include "helper/logical_type.hpp"
 #include "io/cache/types.hpp"
+#include "late_mat/column_origin.hpp"
+#include "late_mat/defer_directive.hpp"
+#include "op/scan/gpu_ingestible_types.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "transparent/replay_admission.hpp"
+
+#include <cuda/stream>
 
 #include <data/data_batch_utils.hpp>
-#include <data/sirius_converter_registry.hpp>
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/vector.hpp>
 #include <helper/numeric_narrowing.hpp>
 #include <log/logging.hpp>
 #include <memory/size_arithmetic.hpp>
@@ -36,27 +48,33 @@
 
 // cudf
 #include <cudf/binaryop.hpp>
+#include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
 #include <cudf/column/column_stream.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/cudf_utils.hpp>
 #include <cudf/filling.hpp>
 #include <cudf/scalar/scalar.hpp>
 #include <cudf/table/table.hpp>
 #include <cudf/table/table_view.hpp>
-#include <cudf/utilities/memory_resource.hpp>
+#include <cudf/utilities/type_dispatcher.hpp>
+
+#include <rmm/resource_ref.hpp>
 
 // cucascade
-#include <cucascade/cudf/gpu_data_representation.hpp>
 #include <cucascade/data/data_batch.hpp>
 #include <cucascade/memory/memory_space.hpp>
 
 // standard library
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <mutex>
 #include <optional>
 #include <stdexcept>
+#include <string>
 #include <utility>
 #include <vector>
 

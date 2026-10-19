@@ -16,20 +16,30 @@
 
 #include "creator/task_creator.hpp"
 
+#include "creator/config.hpp"
+#include "cucascade/data/data_repository.hpp"
 #include "exec/leased_callable.hpp"
+#include "exec/multi_index_priority_queue.hpp"
+#include "exec/query_lifecycle_registry.hpp"
+#include "exec/queue_priority.hpp"
 #include "log/logging.hpp"
+#include "memory/sirius_memory_reservation_manager.hpp"
 #include "memory/topology_index.hpp"
+#include "op/scan/sirius_gpu_scan_operator.hpp"
 #include "op/scan/sirius_gpu_scan_operator_data.hpp"
 #include "op/sirius_physical_delim_join.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "pipeline/completion_handler.hpp"
 #include "pipeline/gpu_pipeline_task.hpp"
 #include "pipeline/task_scheduler.hpp"
 #include "pipeline/task_submission.hpp"
 #include "planner/query.hpp"
 #include "planner/query_index.hpp"
+#include "query_id.hpp"
+#include "scan_manager/preparation.hpp"
 #include "sirius/exception.hpp"
 #include "sirius_context.hpp"
 
-#include <cucascade/cudf/gpu_data_representation.hpp>
 #include <cucascade/memory/common.hpp>
 #include <cucascade/memory/memory_space.hpp>
 #include <duckdb/execution/execution_context.hpp>
@@ -37,11 +47,17 @@
 
 #include <algorithm>
 #include <cassert>
-#include <limits>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
+#include <memory>
 #include <mutex>
 #include <optional>
+#include <stdexcept>
+#include <string>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 namespace sirius::creator {
 

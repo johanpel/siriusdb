@@ -3,6 +3,12 @@
 
 #include "codegen/jit/fused_tree.hpp"
 #include "codegen/plan/plan_interpreter.hpp"
+#include "codegen/plan/plan_tree.hpp"
+
+#include <memory>
+#include <optional>
+#include <string>
+#include <utility>
 
 namespace simpatico {
 namespace {

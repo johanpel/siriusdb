@@ -16,11 +16,32 @@
 
 #include "op/sirius_physical_concat.hpp"
 
-#include "data/data_batch_utils.hpp"
+#include "cucascade/data/data_batch.hpp"
+#include "cucascade/data/data_repository.hpp"
+#include "cucascade/memory/memory_space.hpp"
+#include "helper/logical_type.hpp"
 #include "op/merge/gpu_merge_impl.hpp"
 #include "op/sirius_physical_hash_join.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "op/sirius_physical_partition_consumer_operator.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 #include "telemetry/nvtx.hpp"
+
+#include <cuda/stream>
+
+#include <duckdb/common/enums/join_type.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <mutex>
+#include <optional>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

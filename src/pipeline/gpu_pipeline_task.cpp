@@ -16,7 +16,12 @@
 
 #include "pipeline/gpu_pipeline_task.hpp"
 
+#include "cucascade/data/data_batch.hpp"
+#include "cucascade/memory/common.hpp"
+#include "cuda_runtime_api.h"
 #include "cudf/cudf_utils.hpp"
+#include "exec/multi_index_priority_queue.hpp"
+#include "exec/queue_priority.hpp"
 #include "helper/cuda_launch_error.hpp"
 #include "late_mat/port_materialize.hpp"
 #include "log/logging.hpp"
@@ -24,11 +29,26 @@
 #include "memory/size_arithmetic.hpp"
 #include "op/scan/sirius_gpu_scan_operator.hpp"
 #include "op/scan/sirius_gpu_scan_operator_data.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "parallel/task.hpp"
 #include "pipeline/oom_reschedule_exception.hpp"
+#include "pipeline/sirius_pipeline_itask.hpp"
+#include "pipeline/sirius_pipeline_task_states.hpp"
+#include "query_id.hpp"
 #include "telemetry-bridge/gen/quent.hpp"
 #include "telemetry/nvtx.hpp"
 #include "telemetry/telemetry_context.hpp"
+#include "thrust/system/cuda/error.h"
 
+#include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
+#include <cudf/utilities/type_dispatcher.hpp>
+
+#include <rmm/error.hpp>
+
+#include <cuda/stream>
+#include <cuda_runtime_api.h>
 #include <thrust/system/system_error.h>
 
 #include <absl/cleanup/cleanup.h>
@@ -38,12 +58,19 @@
 #include <cucascade/memory/reservation_aware_resource_adaptor.hpp>
 #include <data/data_batch_utils.hpp>
 
+#include <algorithm>
+#include <chrono>
+#include <cstddef>
 #include <cstdint>
+#include <exception>
 #include <format>
 #include <limits>
+#include <memory>
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace pipeline {

@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
+#include "sirius/context/config.hpp"
+#include "sirius/error.hpp"
 #include "sirius_config.hpp"
 
 #include <sirius/context/config_builder.hpp>
+#include <yaml-cpp/exceptions.h>
+#include <yaml-cpp/node/parse.h>
 #include <yaml-cpp/yaml.h>
 
+#include <cstddef>
+#include <expected>
+#include <filesystem>
 #include <fstream>
+#include <ios>
+#include <memory>
+#include <string>
 #include <utility>
 
 namespace sirius {

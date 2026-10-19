@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
+#include "op/dynamic_filter/sirius_dynamic_filter.hpp"
+#include "op/scan/dynamic_filter_gate.hpp"
+#include "op/scan/scan_plan.hpp"
+
+#include <cudf/ast/ast_operator.hpp>
+#include <cudf/ast/expressions.hpp>
 #include <cudf/binaryop.hpp>
+#include <cudf/column/column.hpp>
 #include <cudf/copying.hpp>
 #include <cudf/cudf_utils.hpp>
 #include <cudf/filling.hpp>
+#include <cudf/scalar/scalar.hpp>
 #include <cudf/stream_compaction.hpp>
+#include <cudf/table/table.hpp>
+#include <cudf/table/table_view.hpp>
 #include <cudf/transform.hpp>
+#include <cudf/types.hpp>
 #include <cudf/utilities/memory_resource.hpp>
 
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
 #include <cuda_runtime_api.h>
 
 #include <log/logging.hpp>
@@ -30,6 +44,7 @@
 #include <telemetry/nvtx.hpp>
 
 #include <algorithm>
+#include <atomic>
 #include <cassert>
 #include <cmath>
 #include <cstddef>
@@ -38,7 +53,6 @@
 #include <memory>
 #include <mutex>
 #include <optional>
-#include <ranges>
 #include <span>
 #include <stdexcept>
 #include <utility>

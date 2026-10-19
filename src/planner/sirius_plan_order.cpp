@@ -16,8 +16,17 @@
 
 #include "duckdb/planner/operator/logical_order.hpp"
 #include "helper/type_conversions.hpp"
+#include "op/sirius_physical_operator.hpp"
 #include "op/sirius_physical_order.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
+
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <cstddef>
+#include <utility>
 
 namespace sirius::planner {
 

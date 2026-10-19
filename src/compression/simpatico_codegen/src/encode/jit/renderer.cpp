@@ -73,7 +73,8 @@
 #include "codegen/jit/fused_tree.hpp"
 #include "codegen/jit/render_util.hpp"
 
-#include <cctype>
+#include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <sstream>
 #include <stdexcept>

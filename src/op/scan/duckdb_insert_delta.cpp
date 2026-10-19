@@ -16,25 +16,33 @@
 
 #include "op/scan/duckdb_insert_delta.hpp"
 
+#include "helper/logical_type.hpp"
 #include "helper/type_conversions.hpp"
+#include "op/scan/duckdb_native_metadata.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
 
+#include <cudf/types.hpp>
 #include <cudf/utilities/bit.hpp>
 
+#include <duckdb/common/enums/compression_type.hpp>
 #include <duckdb/common/enums/scan_options.hpp>
+#include <duckdb/common/typedefs.hpp>
 #include <duckdb/common/types/selection_vector.hpp>
 #include <duckdb/common/vector_size.hpp>
 #include <duckdb/function/compression_function.hpp>
 #include <duckdb/function/partition_stats.hpp>
-#include <duckdb/main/attached_database.hpp>
+#include <duckdb/storage/block_manager.hpp>
 #include <duckdb/storage/buffer/buffer_handle.hpp>
 #include <duckdb/storage/buffer_manager.hpp>
 #include <duckdb/storage/data_table.hpp>
 #include <duckdb/storage/segment/uncompressed.hpp>
 #include <duckdb/storage/statistics/base_statistics.hpp>
 #include <duckdb/storage/statistics/string_stats.hpp>
+#include <duckdb/storage/storage_info.hpp>
 #include <duckdb/storage/table/array_column_data.hpp>
 #include <duckdb/storage/table/column_data.hpp>
 #include <duckdb/storage/table/column_segment.hpp>
+#include <duckdb/storage/table/column_segment_tree.hpp>
 #include <duckdb/storage/table/row_group.hpp>
 #include <duckdb/storage/table/row_group_collection.hpp>
 #include <duckdb/storage/table/row_group_segment_tree.hpp>
@@ -44,10 +52,14 @@
 #include <duckdb/transaction/duck_transaction.hpp>
 
 #include <algorithm>
+#include <cstdint>
 #include <cstring>
+#include <memory>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace sirius::op::scan {
 

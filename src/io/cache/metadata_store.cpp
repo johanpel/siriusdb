@@ -16,6 +16,12 @@
 
 #include "io/cache/metadata_store.hpp"
 
+#include "io/types.hpp"
+
+#include <memory>
+#include <mutex>
+#include <shared_mutex>
+#include <string_view>
 #include <utility>
 
 namespace sirius::io::cache {

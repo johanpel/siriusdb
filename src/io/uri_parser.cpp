@@ -19,10 +19,12 @@
 #include <duckdb/common/path.hpp>
 
 #include <cctype>
+#include <cstddef>
 #include <stdexcept>
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <utility>
 
 namespace sirius::io {
 

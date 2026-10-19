@@ -17,29 +17,60 @@
 #include "transparent/physical_sirius_execution.hpp"
 
 #include "log/logging.hpp"
+#include "op/scan/table_scan/bound_read_view.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
+#include "op/sirius_physical_operator.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
+#include "query_id.hpp"
 #include "sirius_context.hpp"
 #include "sirius_interface.hpp"
 #include "sirius_sql_rewrite.hpp"
+#include "transparent/plan_source_policy.hpp"
 #include "transparent/read_view_registry.hpp"
+#include "transparent/replay_admission.hpp"
 #include "transparent/sirius_optimizer_extension.hpp"
 
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/enums/operator_result_type.hpp>
+#include <duckdb/common/enums/physical_operator_type.hpp>
+#include <duckdb/common/enums/query_result_state.hpp>
+#include <duckdb/common/enums/result_lifetime.hpp>
+#include <duckdb/common/enums/result_ordering.hpp>
 #include <duckdb/common/enums/statement_type.hpp>
+#include <duckdb/common/error_data.hpp>
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/identifier.hpp>
+#include <duckdb/common/shared_ptr.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/execution/execution_context.hpp>
 #include <duckdb/execution/executor.hpp>
 #include <duckdb/execution/operator/helper/physical_result_collector.hpp>
 #include <duckdb/execution/operator/helper/physical_result_sink.hpp>
+#include <duckdb/execution/physical_operator_states.hpp>
 #include <duckdb/main/buffered_data/batched_buffered_data.hpp>
 #include <duckdb/main/buffered_data/simple_buffered_data.hpp>
 #include <duckdb/main/client_config.hpp>
 #include <duckdb/main/client_context.hpp>
 #include <duckdb/main/prepared_statement_data.hpp>
 #include <duckdb/main/query_result.hpp>
+#include <duckdb/main/result_format.hpp>
 #include <duckdb/optimizer/optimizer.hpp>
 #include <duckdb/parser/parser.hpp>
 #include <duckdb/planner/planner.hpp>
 
 #include <chrono>
+#include <cstdint>
+#include <exception>
+#include <memory>
+#include <optional>
+#include <stdexcept>
+#include <string>
 #include <thread>
+#include <utility>
+#include <vector>
 
 namespace sirius::transparent {
 

@@ -14,19 +14,19 @@
 // order, so if they are wrong the output is complete, correctly sized, and
 // permuted — the failure mode least likely to be noticed downstream.
 
+#include "codegen/jit/fused_tree.hpp"
 #include "codegen/selection/chunk_row_set.hpp"
 #include "codegen/selection/row_id_space.hpp"
+#include "cuda_runtime_api.h"
 
 #include <rmm/mr/per_device_resource.hpp>
 
-#include <cuda/stream>
 #include <cuda_runtime.h>
 
-#include <algorithm>
 #include <cstdint>
 #include <cstdio>
+#include <exception>
 #include <set>
-#include <stdexcept>
 #include <vector>
 
 using sirius::codegen::build_chunk_row_set;

@@ -16,11 +16,18 @@
 
 #include "log/spdlog_owning_sink.hpp"
 
+#include "log/level.hpp"
+#include "log/sink.hpp"
+
+#include <spdlog/common.h>
+#include <spdlog/logger.h>
 #include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/spdlog.h>
 
 #include <chrono>
 #include <memory>
+#include <source_location>
+#include <string_view>
 
 namespace sirius::log {
 

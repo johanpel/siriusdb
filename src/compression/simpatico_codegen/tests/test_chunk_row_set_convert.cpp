@@ -20,18 +20,19 @@
 // touched chunks would pass any check that looked only at survivors, and
 // invent rows everywhere else.
 
+#include "codegen/jit/fused_tree.hpp"
 #include "codegen/selection/chunk_row_set.hpp"
 #include "codegen/selection/selection.hpp"
+#include "cuda_runtime_api.h"
 
 #include <rmm/device_buffer.hpp>
 #include <rmm/mr/per_device_resource.hpp>
 
-#include <cuda/stream>
 #include <cuda_runtime.h>
 
 #include <cstdint>
 #include <cstdio>
-#include <stdexcept>
+#include <exception>
 #include <vector>
 
 using sirius::codegen::build_chunk_row_set;

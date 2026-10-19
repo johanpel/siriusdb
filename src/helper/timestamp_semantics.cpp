@@ -16,17 +16,24 @@
 
 #include <cudf/aggregation.hpp>
 #include <cudf/binaryop.hpp>
+#include <cudf/column/column.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/copying.hpp>
 #include <cudf/reduction.hpp>
 #include <cudf/scalar/scalar.hpp>
-#include <cudf/unary.hpp>
+#include <cudf/types.hpp>
 #include <cudf/utilities/traits.hpp>
+
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
 
 #include <helper/timestamp_semantics.hpp>
 #include <sirius/exception.hpp>
 
 #include <cstdint>
 #include <limits>
+#include <memory>
 
 namespace sirius::temporal {
 

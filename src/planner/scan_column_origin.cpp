@@ -16,6 +16,11 @@
 
 #include "planner/scan_column_origin.hpp"
 
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/enums/join_type.hpp>
+#include <duckdb/common/enums/logical_operator_type.hpp>
+#include <duckdb/common/projection_index.hpp>
+#include <duckdb/common/vector.hpp>
 #include <duckdb/planner/expression/bound_reference_expression.hpp>
 #include <duckdb/planner/operator/logical_aggregate.hpp>
 #include <duckdb/planner/operator/logical_filter.hpp>
@@ -23,6 +28,9 @@
 #include <duckdb/planner/operator/logical_join.hpp>
 #include <duckdb/planner/operator/logical_order.hpp>
 #include <duckdb/planner/operator/logical_projection.hpp>
+
+#include <cstddef>
+#include <optional>
 
 namespace sirius::planner {
 

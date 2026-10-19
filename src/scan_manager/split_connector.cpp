@@ -19,9 +19,18 @@
 #include "op/scan/sirius_gpu_scan_operator_data.hpp"
 #include "op/sirius_physical_operator.hpp"
 
+#include <atomic>
 #include <cassert>
 #include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <optional>
 #include <utility>
+#include <vector>
 
 namespace sirius::scan_manager {
 

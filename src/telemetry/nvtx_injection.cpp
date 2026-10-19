@@ -18,10 +18,13 @@
 
 #include <dlfcn.h>
 #include <link.h>
+#include <stdlib.h>
 
 #include <cstdlib>
 #include <filesystem>
+#include <string>
 #include <string_view>
+#include <system_error>
 
 // Statically embedded by telemetry_bridge. Rust archives are localized by the
 // extension link (`--exclude-libs,ALL`), so this regular C++ object supplies the

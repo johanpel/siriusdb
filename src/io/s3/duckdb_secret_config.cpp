@@ -7,9 +7,15 @@
 
 #include "io/s3/duckdb_secret_config.hpp"
 
+#include "io/object_store_config.hpp"
+
 #include <duckdb/catalog/catalog_transaction.hpp>
+#include <duckdb/common/enums/on_create_conflict.hpp>
 #include <duckdb/common/exception.hpp>
-#include <duckdb/common/string_util.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/identifier.hpp>
+#include <duckdb/common/types/value.hpp>
+#include <duckdb/common/unique_ptr.hpp>
 #include <duckdb/main/client_context.hpp>
 #include <duckdb/main/database.hpp>
 #include <duckdb/main/secret/secret.hpp>
@@ -17,7 +23,9 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstddef>
 #include <string>
+#include <string_view>
 #include <utility>
 
 namespace sirius::io::s3 {

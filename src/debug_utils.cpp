@@ -5,11 +5,13 @@
 
 #include "debug_utils.hpp"
 
+#include "cucascade/memory/common.hpp"
+#include "cuda_runtime_api.h"
 #include "data/data_batch_utils.hpp"
 #include "log/logging.hpp"
 
+#include <cudf/aggregation.hpp>
 #include <cudf/copying.hpp>
-#include <cudf/fixed_point/fixed_point.hpp>
 #include <cudf/hashing.hpp>
 #include <cudf/null_mask.hpp>
 #include <cudf/reduction.hpp>
@@ -18,17 +20,27 @@
 #include <cudf/table/table_view.hpp>
 #include <cudf/types.hpp>
 #include <cudf/utilities/bit.hpp>
+#include <cudf/utilities/memory_resource.hpp>
 #include <cudf/utilities/type_dispatcher.hpp>
 
+#include <rmm/device_buffer.hpp>
+
+#include <cuda/stream>
 #include <cuda_runtime.h>
 
 #include <cucascade/data/data_batch.hpp>
 
 #include <algorithm>
+#include <cstdint>
 #include <cstdlib>
+#include <exception>
 #include <format>
+#include <optional>
 #include <random>
+#include <string>
 #include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 

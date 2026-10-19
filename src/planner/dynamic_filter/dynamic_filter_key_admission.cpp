@@ -22,13 +22,23 @@
 #include "duckdb/planner/joinside.hpp"
 #include "expression/ast/node.hpp"
 #include "expression/ast/reference.hpp"
-#include "helper/type_conversions.hpp"
+#include "expression/join_condition.hpp"
 #include "op/dynamic_filter/dynamic_filter_key_domain.hpp"
+#include "op/dynamic_filter/dynamic_filter_publish_plan.hpp"
 
+#include <cudf/types.hpp>
+
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/enums/join_type.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <optional>
 #include <stdexcept>
 #include <utility>
+#include <vector>
 
 namespace sirius::planner {
 

@@ -1,5 +1,6 @@
 // A fresh process is essential: the production cache location is process-cached.
 #include "codegen/jit/kernel_cache.hpp"
+#include "codegen/jit/nvrtc_compiler.hpp"
 
 #include <cuda.h>
 #include <cuda_runtime_api.h>
@@ -8,6 +9,7 @@
 #include <nvrtc.h>
 
 #include <cstdio>
+#include <exception>
 #include <stdexcept>
 #include <string>
 

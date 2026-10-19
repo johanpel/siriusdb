@@ -17,6 +17,9 @@
 #include "transaction_utils.hpp"
 
 #include <duckdb/catalog/catalog.hpp>
+#include <duckdb/common/identifier.hpp>
+#include <duckdb/common/shared_ptr.hpp>
+#include <duckdb/common/typedefs.hpp>
 #include <duckdb/main/client_context.hpp>
 #include <duckdb/main/database_manager.hpp>
 #include <duckdb/transaction/duck_transaction.hpp>

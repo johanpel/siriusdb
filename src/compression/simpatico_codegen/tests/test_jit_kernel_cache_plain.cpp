@@ -22,12 +22,18 @@
 #include "codegen/encode/jit/renderer.hpp"
 #include "codegen/jit/fused_tree.hpp"
 #include "codegen/jit/kernel_cache.hpp"
-#include "test_utils.hpp"
+#include "codegen/jit/nvrtc_compiler.hpp"
+#include "cuda_runtime_api.h"
+
+#include <cuda_runtime_api.h>
 
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
+#include <exception>
+#include <ratio>
 #include <string>
+#include <utility>
 
 namespace cje = codegen::encode::jit;
 namespace cjd = codegen::decode::jit;

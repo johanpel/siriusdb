@@ -16,19 +16,26 @@
 
 #include "io/io_context.hpp"
 
+#include "exec/semi_future.hpp"
 #include "io/cache/config.hpp"
 #include "io/cache/prefetching_cache.hpp"
 #include "io/sirius_datasource.hpp"
 #include "io/types.hpp"
 #include "io/uri_parser.hpp"
+#include "log/logging.hpp"
+
+#include <cuda/stream>
 
 #include <cassert>
-#include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <exception>
 #include <memory>
+#include <span>
 #include <stdexcept>
+#include <string>
 #include <utility>
+#include <vector>
 
 namespace sirius::io {
 

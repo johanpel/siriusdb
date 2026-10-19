@@ -16,27 +16,41 @@
 
 #include "transparent/read_view_registry.hpp"
 
-#include "io/sirius_datasource.hpp"
 #include "op/scan/duckdb_native_gpu_ingestible.hpp"
 #include "op/scan/gpu_ingestible_types.hpp"
 #include "op/scan/parquet_gpu_ingestible.hpp"
+#include "op/scan/table_scan/bound_read_view.hpp"
+#include "op/scan/table_scan/materializer_capabilities.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
 #include "op/sirius_physical_table_scan.hpp"
 #include "planner/connector_registry.hpp"
 #include "transparent/replay_admission.hpp"
 
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/vector.hpp>
 #include <duckdb/planner/operator/logical_get.hpp>
 #include <duckdb/storage/single_file_block_manager.hpp>
 
 #include <algorithm>
 #include <atomic>
+#include <cstddef>
+#include <cstdint>
 #include <iomanip>
+#include <ios>
 #include <iterator>
 #include <limits>
+#include <memory>
+#include <optional>
+#include <span>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 #include <string_view>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
+#include <vector>
 
 namespace sirius::transparent {
 namespace {

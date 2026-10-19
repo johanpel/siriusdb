@@ -16,14 +16,30 @@
 
 #include "op/sirius_physical_filter.hpp"
 
-#include "config.hpp"
 #include "data/data_batch_utils.hpp"
+#include "expression/ast/node.hpp"
 #include "expression_evaluator/expression_evaluator.hpp"
+#include "helper/logical_type.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "telemetry/nvtx.hpp"
+
+#include <cudf/types.hpp>
+#include <cudf/utilities/memory_resource.hpp>
+
+#include <cuda/stream>
 
 #include <cucascade/cudf/gpu_data_representation.hpp>
 #include <cucascade/data/data_batch.hpp>
-#include <duckdb/common/exception.hpp>
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <cstddef>
+#include <memory>
+#include <type_traits>
+#include <utility>
+#include <variant>
+#include <vector>
 
 namespace sirius {
 namespace op {

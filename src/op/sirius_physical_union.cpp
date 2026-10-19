@@ -17,14 +17,31 @@
 #include "op/sirius_physical_union.hpp"
 
 #include "creator/task_creator.hpp"
+#include "cucascade/data/data_batch.hpp"
+#include "helper/logical_type.hpp"
+#include "helper/types.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_passthrough_sink.hpp"
 #include "pipeline/sirius_meta_pipeline.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 #include "sirius/exception.hpp"
 
+#include <cuda/stream>
 #include <nvtx3/nvtx3.hpp>
 
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <cstddef>
+#include <memory>
+#include <mutex>
+#include <optional>
 #include <ranges>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

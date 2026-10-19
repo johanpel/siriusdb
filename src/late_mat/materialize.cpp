@@ -17,24 +17,30 @@
 #include "late_mat/materialize.hpp"
 
 #include "compression/compressed_representation.hpp"
+#include "cucascade/memory/common.hpp"
+#include "cuda_runtime_api.h"
 #include "late_mat/multi_source_gather.hpp"
+#include "late_mat/prepared_selection.hpp"
 #include "log/logging.hpp"
 #include "telemetry/nvtx.hpp"
 
 #include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/concatenate.hpp>
 #include <cudf/copying.hpp>
 #include <cudf/null_mask.hpp>
 #include <cudf/table/table.hpp>
 #include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
 #include <cudf/utilities/traits.hpp>
 
 #include <rmm/cuda_device.hpp>
 #include <rmm/device_buffer.hpp>
+#include <rmm/resource_ref.hpp>
 
 #include <cuda/buffer>
-#include <cuda/utility>
+#include <cuda/stream>
 #include <cuda_runtime.h>
 
 #include <api/simpatico_codegen.hpp>
@@ -47,6 +53,7 @@
 #include <algorithm>
 #include <atomic>
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <stdexcept>

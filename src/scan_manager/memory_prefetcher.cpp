@@ -16,12 +16,18 @@
 
 #include "scan_manager/memory_prefetcher.hpp"
 
+#include "cucascade/memory/common.hpp"
 #include "data/data_batch_utils.hpp"
 #include "data/sirius_converter_registry.hpp"
+#include "exec/query_lifecycle_registry.hpp"
 #include "log/logging.hpp"
+#include "scan_manager/config.hpp"
+#include "scan_manager/split_connector.hpp"
 
 #include <rmm/cuda_device.hpp>
 #include <rmm/error.hpp>
+
+#include <cuda/stream>
 
 #include <absl/cleanup/cleanup.h>
 #include <cucascade/cudf/gpu_data_representation.hpp>
@@ -29,8 +35,14 @@
 #include <cucascade/memory/reservation_aware_resource_adaptor.hpp>
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
+#include <cstddef>
 #include <exception>
+#include <memory>
+#include <thread>
+#include <utility>
+#include <vector>
 
 namespace sirius::scan_manager {
 

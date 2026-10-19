@@ -16,15 +16,28 @@
 
 #include "scan_manager/preparation_ledger.hpp"
 
+#include "cucascade/memory/common.hpp"
 #include "op/scan/puffin_reader.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
+#include "scan_manager/preparation.hpp"
 
 #include <cucascade/memory/fixed_size_host_memory_resource.hpp>
 #include <cucascade/memory/memory_reservation_manager.hpp>
 #include <cucascade/memory/memory_space.hpp>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
 #include <limits>
 #include <map>
+#include <memory>
+#include <mutex>
+#include <optional>
+#include <span>
+#include <stdexcept>
+#include <utility>
+#include <vector>
 
 namespace sirius::scan_manager {
 namespace {

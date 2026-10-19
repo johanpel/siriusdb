@@ -15,9 +15,20 @@
  */
 
 // sirius
+#include "compression/compressed_scan.hpp"
+#include "expression/ast/conjunction.hpp"
+#include "helper/logical_type.hpp"
+#include "helper/numeric_narrowing.hpp"
+#include "op/scan/scan_utils.hpp"
+
+#include <duckdb/common/column_index.hpp>
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
 #include <duckdb/common/types/date.hpp>
 #include <duckdb/common/types/interval.hpp>
 #include <duckdb/common/types/value.hpp>
+#include <duckdb/common/vector.hpp>
 #include <duckdb/planner/expression/bound_cast_expression.hpp>
 #include <duckdb/planner/expression/bound_comparison_expression.hpp>
 #include <duckdb/planner/expression/bound_conjunction_expression.hpp>
@@ -26,6 +37,7 @@
 #include <duckdb/planner/expression/bound_operator_expression.hpp>
 #include <duckdb/planner/expression/bound_reference_expression.hpp>
 #include <duckdb/planner/filter/expression_filter.hpp>
+#include <duckdb/planner/table_filter_set.hpp>
 #include <expression/ast/constant_range.hpp>
 #include <expression/ast/from_duckdb.hpp>
 #include <expression/ast/utils.hpp>
@@ -36,11 +48,17 @@
 
 // standard library
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <memory>
 #include <optional>
+#include <span>
 #include <stdexcept>
+#include <string>
+#include <unordered_set>
 #include <utility>
+#include <vector>
 
 namespace sirius::op {
 

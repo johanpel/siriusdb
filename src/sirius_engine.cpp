@@ -16,40 +16,53 @@
 
 #include "sirius_engine.hpp"
 
+#include "cucascade/memory/common.hpp"
 #include "duckdb/execution/execution_context.hpp"
 #include "duckdb/main/connection.hpp"
 #include "duckdb/main/settings.hpp"
 #include "duckdb/parallel/thread_context.hpp"
-#include "io/sirius_datasource.hpp"
 #include "log/logging.hpp"
 #include "op/scan/iceberg_gpu_ingestible.hpp"
 #include "op/scan/sirius_gpu_scan_operator.hpp"
-#include "op/sirius_physical_concat.hpp"
 #include "op/sirius_physical_cte.hpp"
 #include "op/sirius_physical_delim_join.hpp"
 #include "op/sirius_physical_hash_join.hpp"
 #include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_partition.hpp"
 #include "op/sirius_physical_result_collector.hpp"
+#include "pipeline/pipeline_build_context.hpp"
 #include "pipeline/repository_wiring.hpp"
+#include "pipeline/sirius_pipeline.hpp"
 #include "pipeline/sirius_pipeline_converter.hpp"
 #include "pipeline/sirius_plan_printer.hpp"
 #include "planner/gpu_admission.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
+#include "query_id.hpp"
 #include "scan_manager/sirius_scan_manager.hpp"
 #include "sirius/exception.hpp"
 #include "sirius_config.hpp"
 #include "sirius_context.hpp"
-#include "sirius_interface.hpp"
 #include "telemetry-bridge/gen/quent.hpp"
 #include "telemetry/nvtx.hpp"
+#include "telemetry/telemetry_context.hpp"
 
-#include <cucascade/data/data_repository_manager.hpp>
 #include <cucascade/memory/memory_space.hpp>
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/unique_ptr.hpp>
 
 #include <algorithm>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
+#include <future>
 #include <memory>
+#include <optional>
 #include <stdexcept>
+#include <string>
+#include <thread>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 

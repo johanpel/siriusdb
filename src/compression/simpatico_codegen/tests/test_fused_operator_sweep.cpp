@@ -55,20 +55,29 @@
 
 #include "codegen/jit/fused_tree.hpp"
 #include "codegen/jit/kernel_cache.hpp"
+#include "codegen/jit/nvrtc_compiler.hpp"
+#include "cuda_runtime_api.h"
+#include "gpu_encode.hpp"
 #include "jit_decode.hpp"
-#include "test_utils.hpp"
 
 #include <cuda.h>
+#include <cuda_runtime_api.h>
 
+#include <sched.h>
 #include <spawn.h>
+#include <stdlib.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <algorithm>
 #include <array>
+#include <cerrno>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <exception>
 #include <functional>
 #include <memory>
 #include <sstream>

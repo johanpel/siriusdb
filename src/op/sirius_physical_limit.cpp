@@ -16,13 +16,32 @@
 
 #include "op/sirius_physical_limit.hpp"
 
+#include "cucascade/data/data_batch.hpp"
 #include "data/data_batch_utils.hpp"
+#include "helper/logical_type.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "sirius/exception.hpp"
+#include "telemetry/data_batch_probe.hpp"
 #include "telemetry/nvtx.hpp"
 
 #include <cudf/copying.hpp>
+#include <cudf/table/table.hpp>
+#include <cudf/types.hpp>
+
+#include <cuda/stream>
 
 #include <cucascade/cudf/gpu_data_representation.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/planner/bound_result_modifier.hpp>
+
+#include <algorithm>
+#include <atomic>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

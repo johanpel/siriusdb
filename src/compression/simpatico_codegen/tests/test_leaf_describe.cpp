@@ -1,18 +1,20 @@
 #include "api/simpatico_codegen.hpp"
-#include "codegen/jit/nvrtc_compiler.hpp"
 #include "codegen/plan/leaf_desc.hpp"
+#include "codegen/plan/operator_registry.hpp"
+#include "codegen/plan/plan_tree.hpp"
 #include "codegen/plan/representation.hpp"
+#include "cuda_runtime_api.h"
 #include "test_utils.hpp"
 
-#include <cudf/column/column_factories.hpp>
 #include <cudf/table/table.hpp>
 #include <cudf/types.hpp>
 
 #include <cuda_runtime.h>
 
 #include <cstdio>
-#include <stdexcept>
+#include <exception>
 #include <string>
+#include <variant>
 #include <vector>
 
 namespace {

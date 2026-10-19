@@ -16,22 +16,34 @@
 // share the bitjoin/column-copy helpers and reconstruct_representation.
 #include "codegen/codegen_bridge.hpp"
 #include "codegen/plan/bitjoin_layout.hpp"
+#include "codegen/plan/operator_registry.hpp"
+#include "codegen/plan/plan_dsl.hpp"
 #include "codegen/plan/plan_interpreter.hpp"
 #include "codegen/plan/plan_tree.hpp"
 #include "codegen/plan/representation.hpp"
 #include "codegen/util/nvtx.hpp"
+#include "cuda_runtime_api.h"
 
+#include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
+#include <cudf/column/column_view.hpp>
+#include <cudf/types.hpp>
 
-#include <rmm/mr/per_device_resource.hpp>
+#include <rmm/resource_ref.hpp>
 
+#include <cuda/stream>
 #include <cuda_runtime.h>
 
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 // The C++-native JIT codegen encode entry point (``encode_fused_subtree``) is

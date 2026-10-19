@@ -7,8 +7,10 @@
 
 #include <nvrtc.h>
 
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -25,6 +27,7 @@
 // nvrtc runtime the extension already links -- no CUDA toolkit headers on disk.
 #include "codegen/jit/cccl_embedded_headers.h"
 #include "codegen/jit/embedded_headers.h"
+#include "jit/cache_identity.hpp"
 
 namespace codegen::jit {
 

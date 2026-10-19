@@ -16,8 +16,14 @@
 
 #include "duckdb/planner/operator/logical_set_operation.hpp"
 #include "helper/type_conversions.hpp"
+#include "op/sirius_physical_operator.hpp"
 #include "op/sirius_physical_union.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
+
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/unique_ptr.hpp>
 
 namespace sirius::planner {
 

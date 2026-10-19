@@ -16,20 +16,24 @@
 
 #include "op/scan/duckdb_native_metadata.hpp"
 
+#include "helper/logical_type.hpp"
 #include "helper/type_conversions.hpp"
 #include "log/logging.hpp"
 #include "op/scan/duckdb_native_metadata_cache.hpp"
 #include "op/scan/metadata_walk_parallel.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
 #include "telemetry/nvtx.hpp"
 
 #include <duckdb/common/column_index.hpp>
 #include <duckdb/common/enums/compression_type.hpp>
 #include <duckdb/common/enums/filter_propagate_result.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
 #include <duckdb/function/compression_function.hpp>
 #include <duckdb/function/partition_stats.hpp>
 #include <duckdb/main/attached_database.hpp>
-#include <duckdb/planner/expression/bound_reference_expression.hpp>
-#include <duckdb/planner/expression_iterator.hpp>
 #include <duckdb/planner/filter/expression_filter.hpp>
 #include <duckdb/planner/table_filter.hpp>
 #include <duckdb/planner/table_filter_set.hpp>
@@ -37,23 +41,29 @@
 #include <duckdb/storage/segment/uncompressed.hpp>
 #include <duckdb/storage/statistics/base_statistics.hpp>
 #include <duckdb/storage/statistics/string_stats.hpp>
+#include <duckdb/storage/storage_index.hpp>
+#include <duckdb/storage/storage_info.hpp>
 #include <duckdb/storage/storage_manager.hpp>
 #include <duckdb/storage/table/array_column_data.hpp>
 #include <duckdb/storage/table/column_data.hpp>
 #include <duckdb/storage/table/column_segment.hpp>
+#include <duckdb/storage/table/column_segment_tree.hpp>
 #include <duckdb/storage/table/row_group.hpp>
 #include <duckdb/storage/table/row_group_collection.hpp>
 #include <duckdb/storage/table/row_group_segment_tree.hpp>
 #include <duckdb/storage/table/segment_tree.hpp>
 #include <duckdb/storage/table/standard_column_data.hpp>
-#include <duckdb/storage/table_storage_info.hpp>
 #include <scan_manager/pinned_chunk_stats.hpp>
 
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <memory>
 #include <optional>
+#include <span>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>

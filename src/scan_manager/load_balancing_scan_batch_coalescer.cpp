@@ -17,15 +17,29 @@
 #include "scan_manager/load_balancing_scan_batch_coalescer.hpp"
 
 #include "exec/try.hpp"
-#include "log/logging.hpp"
 #include "op/scan/duckdb_native_gpu_ingestible.hpp"
 #include "op/scan/iceberg_gpu_ingestible.hpp"
+#include "op/scan/sirius_gpu_scan_operator.hpp"
 #include "op/scan/sirius_gpu_scan_operator_data.hpp"
-#include "pipeline/sirius_pipeline.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "scan_manager/balancing_strategy.hpp"
+#include "scan_manager/preparation.hpp"
+#include "scan_manager/preparation_coordinator.hpp"
 #include "scan_manager/readahead_scan_manager.hpp"
+#include "scan_manager/split_provider.hpp"
 #include "sirius_context.hpp"
 #include "transparent/read_view_registry.hpp"
+#include "transparent/replay_admission.hpp"
 
+#include <cstddef>
+#include <cstdint>
+#include <exception>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <optional>
+#include <stdexcept>
 #include <stop_token>
 #include <utility>
 

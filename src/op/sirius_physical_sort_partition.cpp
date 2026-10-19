@@ -16,16 +16,39 @@
 
 #include "op/sirius_physical_sort_partition.hpp"
 
-#include "cudf/cudf_utils.hpp"
+#include "cucascade/data/data_batch.hpp"
+#include "cuda_runtime_api.h"
 #include "data/data_batch_utils.hpp"
 #include "duckdb/planner/expression/bound_reference_expression.hpp"
+#include "helper/logical_type.hpp"
 #include "log/logging.hpp"
 #include "op/cudf_sort_order.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "op/sirius_physical_order.hpp"
 #include "op/sirius_physical_sort_sample.hpp"
 #include "sirius/exception.hpp"
 #include "telemetry/nvtx.hpp"
 
+#include <cudf/column/column_view.hpp>
+#include <cudf/copying.hpp>
 #include <cudf/search.hpp>
+#include <cudf/types.hpp>
+#include <cudf/utilities/error.hpp>
+
+#include <cuda/stream>
+#include <cuda_runtime_api.h>
+
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/planner/bound_result_modifier.hpp>
+
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

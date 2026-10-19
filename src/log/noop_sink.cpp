@@ -16,7 +16,12 @@
 
 #include "log/noop_sink.hpp"
 
+#include "log/level.hpp"
+#include "log/sink.hpp"
+
 #include <memory>
+#include <source_location>
+#include <string_view>
 
 namespace sirius::log {
 

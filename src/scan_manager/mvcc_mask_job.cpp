@@ -16,12 +16,15 @@
 
 #include "scan_manager/mvcc_mask_job.hpp"
 
+#include "cucascade/memory/common.hpp"
 #include "exec/completion_controller.hpp"
+#include "exec/invocable.hpp"
 #include "exec/scoped_dispatcher.hpp"
 #include "log/logging.hpp"
 #include "memory/topology_index.hpp"
 #include "op/scan/duckdb_mvcc_visibility.hpp"
 #include "op/scan/duckdb_native_metadata.hpp"
+#include "scan_manager/mvcc_chunk_mask.hpp"
 
 #include <cucascade/memory/fixed_size_host_memory_resource.hpp>
 #include <cucascade/memory/memory_reservation.hpp>
@@ -36,9 +39,14 @@
 #include <exception>
 #include <future>
 #include <map>
+#include <memory>
 #include <mutex>
+#include <span>
 #include <stdexcept>
+#include <string>
+#include <string_view>
 #include <utility>
+#include <vector>
 
 namespace sirius::scan_manager {
 

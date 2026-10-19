@@ -16,10 +16,16 @@
 
 #include "exec/batch_stream.hpp"
 
+#include "cucascade/data/data_repository.hpp"
 #include "sirius/exception.hpp"
 
 #include <cucascade/data/data_batch.hpp>
 
+#include <exception>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <set>
 #include <string>
 #include <utility>
 

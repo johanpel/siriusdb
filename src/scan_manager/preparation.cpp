@@ -17,7 +17,14 @@
 #include "scan_manager/preparation.hpp"
 
 #include "duckdb/common/exception.hpp"
-#include "op/scan/iceberg_delete_set.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
+#include "transparent/replay_admission.hpp"
+
+#include <cstddef>
+#include <memory>
+#include <mutex>
+#include <stdexcept>
+#include <utility>
 
 namespace sirius::scan_manager {
 void preparation_gate::check_interrupted()

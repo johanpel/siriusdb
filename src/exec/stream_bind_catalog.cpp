@@ -16,12 +16,17 @@
 
 #include "exec/stream_bind_catalog.hpp"
 
+#include "exec/stream_session.hpp"
+#include "op/sirius_physical_streaming_source.hpp"
 #include "sirius/exception.hpp"
 
+#include <duckdb/common/shared_ptr.hpp>
 #include <duckdb/main/client_context.hpp>
 
+#include <mutex>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace sirius::exec {
 

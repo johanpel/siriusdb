@@ -16,21 +16,44 @@
 
 #include "downgrade/downgrade_executor.hpp"
 
+#include "cucascade/memory/common.hpp"
+#include "cucascade/memory/stream_pool.hpp"
+#include "cuda_runtime_api.h"
 #include "data/convertible_data.hpp"
 #include "data/convertible_data_batch.hpp"
 #include "data/convertible_gpu_pipeline_task.hpp"
+#include "data/data_repository_manager_registry.hpp"
 #include "downgrade/spill_policy.hpp"
+#include "exec/bounded_thread_pool.hpp"
+#include "exec/config.hpp"
+#include "exec/invocable.hpp"
+#include "exec/multi_index_priority_queue.hpp"
+#include "exec/query_lifecycle_registry.hpp"
 #include "log/logging.hpp"
+#include "parallel/task.hpp"
 
+#include <cuda/stream>
+#include <cuda_runtime_api.h>
 #include <nvtx3/nvtx3.hpp>
 
 #include <absl/cleanup/cleanup.h>
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
+#include <cstddef>
+#include <exception>
+#include <functional>
+#include <future>
+#include <memory>
+#include <mutex>
 #include <optional>
 #include <ranges>
+#include <ratio>
+#include <stdexcept>
+#include <string>
 #include <thread>
+#include <utility>
 #include <vector>
 
 namespace sirius {

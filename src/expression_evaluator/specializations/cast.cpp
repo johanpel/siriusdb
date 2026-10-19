@@ -15,7 +15,10 @@
  */
 
 // sirius
-#include <expression/ast/node.hpp>
+#include "expression/ast/cast.hpp"
+
+#include "expression_evaluator/expression_evaluator_strategy.hpp"
+
 #include <expression_evaluator/ast_supported_types.hpp>
 #include <expression_evaluator/date_cast.hpp>
 #include <expression_evaluator/expression_evaluator.hpp>
@@ -25,12 +28,18 @@
 #include <sirius/exception.hpp>
 
 // cudf
+#include <cudf/ast/ast_operator.hpp>
+#include <cudf/ast/expressions.hpp>
+#include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
 #include <cudf/cudf_utils.hpp>
+#include <cudf/types.hpp>
 #include <cudf/unary.hpp>
 
 // standard library
 #include <algorithm>
+#include <memory>
+#include <utility>
 
 namespace sirius {
 using evaluate_result = expression_evaluator::evaluate_result;

@@ -18,14 +18,21 @@
 #include "memory/sirius_memory_reservation_manager.hpp"
 
 #include "cucascade/memory/common.hpp"
+#include "cucascade/memory/config.hpp"
 
 #include <cudf/utilities/memory_resource.hpp>
 
 #include <rmm/cuda_device.hpp>
 
+#include <cuda/memory_resource>
 #include <cuda_runtime_api.h>
 
 #include <cucascade/memory/memory_reservation_manager.hpp>
+
+#include <cstddef>
+#include <stdexcept>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace memory {

@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
+#include "expression_evaluator/query_policy.hpp"
+#include "io/io_context.hpp"
+#include "op/scan/gpu_ingestible.hpp"
+#include "op/scan/gpu_ingestible_types.hpp"
+#include "op/scan/iceberg_delete_filter.hpp"
+#include "op/scan/iceberg_delete_set.hpp"
 #include "op/scan/iceberg_dv_preparation.hpp"
+#include "op/scan/parquet_gpu_ingestible.hpp"
 #include "op/scan/puffin_reader.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
+#include "scan_manager/preparation.hpp"
+#include "scan_manager/preparation_ledger.hpp"
 #include "sirius/exception.hpp"
 
-#include <cudf/table/table.hpp>
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
 
 #include <cucascade/memory/memory_space.hpp>
 #include <duckdb/common/exception.hpp>
@@ -27,7 +39,12 @@
 #include <op/scan/iceberg_gpu_ingestible.hpp>
 #include <op/scan/parquet_batch_layout.hpp>
 
+#include <algorithm>
+#include <cstddef>
 #include <cstdint>
+#include <exception>
+#include <memory>
+#include <new>
 #include <numeric>
 #include <stdexcept>
 #include <string>

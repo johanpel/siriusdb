@@ -16,12 +16,28 @@
 
 #include "op/sirius_physical_order.hpp"
 
-#include "data/data_batch_utils.hpp"
+#include "cucascade/data/data_batch.hpp"
 #include "duckdb/planner/expression/bound_reference_expression.hpp"
+#include "helper/logical_type.hpp"
 #include "op/cudf_sort_order.hpp"
 #include "op/order/gpu_order_impl.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "sirius/exception.hpp"
 #include "telemetry/nvtx.hpp"
+
+#include <cudf/types.hpp>
+
+#include <cuda/stream>
+
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/planner/bound_result_modifier.hpp>
+
+#include <cstddef>
+#include <memory>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

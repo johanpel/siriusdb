@@ -17,12 +17,26 @@
 #include "exec/stream_plan_bindings.hpp"
 
 #include "duckdb/catalog/catalog.hpp"
-#include "duckdb/catalog/catalog_entry/table_function_catalog_entry.hpp"
 #include "duckdb/main/client_context.hpp"
+#include "duckdb/parser/parsed_data/create_table_function_info.hpp"
 #include "duckdb/storage/statistics/node_statistics.hpp"
+#include "exec/stream_bind_catalog.hpp"
+#include "exec/stream_session.hpp"
 #include "helper/type_conversions.hpp"
 #include "sirius/exception.hpp"
 
+#include <duckdb/catalog/catalog_transaction.hpp>
+#include <duckdb/common/enums/on_create_conflict.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/identifier.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/types/data_chunk.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/function/function.hpp>
+#include <duckdb/function/table_function.hpp>
+
+#include <cstdint>
 #include <string>
 
 namespace sirius::exec {

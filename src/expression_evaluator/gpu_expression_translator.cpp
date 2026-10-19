@@ -15,20 +15,50 @@
  */
 
 // sirius
+#include "cudf/cudf_utils.hpp"
+#include "expression/ast/between.hpp"
+#include "expression/ast/case_expr.hpp"
+#include "expression/ast/cast.hpp"
+#include "expression/ast/coalesce.hpp"
+#include "expression/ast/comparison.hpp"
+#include "expression/ast/conjunction.hpp"
+#include "expression/ast/constant.hpp"
+#include "expression/ast/function_call.hpp"
+#include "expression/ast/in_list.hpp"
+#include "expression/ast/reference.hpp"
+#include "expression/ast/unary_op.hpp"
+#include "expression/function_id.hpp"
+#include "expression/join_condition.hpp"
+#include "expression/value.hpp"
+#include "helper/logical_type.hpp"
+
+#include <duckdb/common/vector.hpp>
 #include <expression/ast/aggregate.hpp>
 #include <expression_evaluator/gpu_expression_translator_internal.hpp>
 #include <log/logging.hpp>
 #include <sirius/exception.hpp>
 
 // cudf
+#include <cudf/ast/ast_operator.hpp>
+#include <cudf/ast/expressions.hpp>
+#include <cudf/fixed_point/fixed_point.hpp>
+#include <cudf/scalar/scalar.hpp>
+#include <cudf/types.hpp>
 #include <cudf/utilities/type_dispatcher.hpp>
 #include <cudf/wrappers/timestamps.hpp>
 
 // standard library
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <functional>
 #include <iterator>
+#include <memory>
 #include <numeric>
+#include <optional>
+#include <string>
 #include <type_traits>
+#include <utility>
 #include <variant>
 
 namespace sirius {

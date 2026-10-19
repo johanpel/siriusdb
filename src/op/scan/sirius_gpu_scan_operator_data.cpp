@@ -16,24 +16,39 @@
 
 // sirius
 #include "compression/compressed_representation.hpp"
+#include "compression/compressed_scan.hpp"
+#include "cucascade/data/common.hpp"
+#include "cucascade/data/data_batch.hpp"
+#include "cucascade/memory/common.hpp"
+#include "cucascade/memory/memory_space.hpp"
+#include "io/cache/types.hpp"
 
+#include <cudf/column/column_view.hpp>
 #include <cudf/table/table.hpp>
+
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
+#include <cuda_runtime_api.h>
 
 #include <compression/decompression_pushdown_policy.hpp>
 #include <cucascade/cudf/gpu_data_representation.hpp>
 #include <data/sirius_converter_registry.hpp>
-#include <log/logging.hpp>
 #include <op/dynamic_filter/sirius_dynamic_filter.hpp>
 #include <op/scan/decoded_batch_representation.hpp>
 #include <op/scan/sirius_gpu_scan_operator_data.hpp>
 #include <scan_manager/readahead_scan_manager.hpp>
 
 #include <algorithm>
+#include <atomic>
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <numeric>
+#include <optional>
 #include <stdexcept>
 #include <utility>
+#include <variant>
 #include <vector>
 
 namespace sirius::op::scan {

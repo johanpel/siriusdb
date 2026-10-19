@@ -31,6 +31,7 @@
 #include "codegen/jit/fused_tree.hpp"
 #include "codegen/jit/kernel_cache.hpp"
 #include "codegen/jit/nvrtc_compiler.hpp"
+#include "codegen/plan/operator_registry.hpp"
 #include "codegen/selection/decompression_pushdown_policy.hpp"
 #include "codegen/selection/selection.hpp"
 
@@ -47,9 +48,10 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <optional>
+#include <ratio>
 #include <stdexcept>
 #include <string>
-#include <tuple>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -60,10 +62,10 @@
 // already compile fine without them.
 #include "codegen/bridge/fused_tree_build.hpp"
 #include "codegen/codegen_bridge.hpp"
-#include "codegen/plan/plan_dsl.hpp"
 #include "codegen/plan/plan_interpreter.hpp"
 #include "codegen/plan/plan_tree.hpp"
 #include "codegen/plan/representation.hpp"
+#include "cuda_runtime_api.h"
 
 #include <cudf/column/column.hpp>
 #include <cudf/null_mask.hpp>
@@ -71,7 +73,9 @@
 
 #include <rmm/device_buffer.hpp>
 #include <rmm/mr/per_device_resource.hpp>
+#include <rmm/resource_ref.hpp>
 
+#include <cuda/cmath>
 #include <cuda/stream>
 
 namespace cc  = codegen;

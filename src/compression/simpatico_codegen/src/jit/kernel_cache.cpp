@@ -1,6 +1,8 @@
 #include "codegen/jit/kernel_cache.hpp"
 
+#include "codegen/jit/nvrtc_compiler.hpp"
 #include "compilation_request.hpp"
+#include "jit/cache_identity.hpp"
 
 #include <unistd.h>
 
@@ -11,9 +13,11 @@
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <ios>
 #include <mutex>
 #include <string>
 #include <system_error>
+#include <utility>
 #include <vector>
 
 namespace codegen::jit {

@@ -18,22 +18,50 @@
 
 #include "data/data_batch_utils.hpp"
 #include "expression/ast/from_duckdb.hpp"
+#include "expression/ast/node.hpp"
 #include "expression_evaluator/expression_evaluator.hpp"
+#include "helper/logical_type.hpp"
 #include "log/logging.hpp"
 #include "op/scan/iceberg_gpu_ingestible.hpp"
 #include "op/scan/scan_utils.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "sirius_config.hpp"
+#include "telemetry/data_batch_probe.hpp"
 #include "telemetry/nvtx.hpp"
 
+#include <cudf/column/column_view.hpp>
 #include <cudf/concatenate.hpp>
 #include <cudf/cudf_utils.hpp>
-#include <cudf/table/table.hpp>
+#include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
+#include <cudf/utilities/memory_resource.hpp>
+
+#include <cuda/stream>
 
 #include <cucascade/cudf/gpu_data_representation.hpp>
 #include <cucascade/data/data_batch.hpp>
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/column_index.hpp>
+#include <duckdb/common/extra_operator_info.hpp>
+#include <duckdb/common/table_column.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/types/value.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/function/function.hpp>
+#include <duckdb/function/table_function.hpp>
+#include <duckdb/planner/table_filter_set.hpp>
 
+#include <cstddef>
+#include <cstdint>
 #include <format>
+#include <memory>
+#include <optional>
+#include <stdexcept>
+#include <string>
 #include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

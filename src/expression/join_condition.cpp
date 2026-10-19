@@ -15,6 +15,7 @@
  */
 
 // sirius
+#include <duckdb/common/vector.hpp>
 #include <expression/ast/from_duckdb.hpp>
 #include <expression/join_condition.hpp>
 
@@ -26,6 +27,8 @@
 // standard library
 #include <stdexcept>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 

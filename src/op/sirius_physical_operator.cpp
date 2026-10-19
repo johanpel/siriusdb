@@ -16,20 +16,39 @@
 
 #include "op/sirius_physical_operator.hpp"
 
-#include "config.hpp"
 #include "cucascade/utils/overloaded.hpp"
+#include "expression_evaluator/query_policy.hpp"
 #include "log/logging.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "pipeline/batch_lock_utils.hpp"
 #include "pipeline/sirius_meta_pipeline.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 #include "sirius/exception.hpp"
+#include "telemetry-bridge/gen/quent.hpp"
 #include "telemetry/data_batch_probe.hpp"
 
+#include <rmm/error.hpp>
+
+#include <cuda/stream>
+
 #include <cucascade/data/data_batch.hpp>
-#include <cucascade/memory/error.hpp>
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/vector.hpp>
 
 #include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
+#include <iostream>
+#include <memory>
 #include <optional>
+#include <ostream>
+#include <string_view>
+#include <utility>
+#include <variant>
+#include <vector>
 
 namespace sirius {
 namespace op {

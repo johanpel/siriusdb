@@ -16,13 +16,22 @@
 
 #include "parallel/task_executor.hpp"
 
+#include "exec/bounded_thread_pool.hpp"
+#include "exec/config.hpp"
+#include "exec/multi_index_priority_queue.hpp"
+#include "exec/query_lifecycle_registry.hpp"
 #include "log/logging.hpp"
+#include "parallel/task.hpp"
 #include "pipeline/gpu_pipeline_task.hpp"
 #include "pipeline/sirius_pipeline_itask.hpp"
 #include "pipeline/task_submission.hpp"
+#include "query_id.hpp"
 #include "telemetry/telemetry_context.hpp"
 
+#include <cstddef>
+#include <exception>
 #include <memory>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <utility>

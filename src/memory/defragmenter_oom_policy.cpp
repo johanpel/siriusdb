@@ -19,9 +19,14 @@
 
 #include "cuda_runtime_api.h"
 
-#include <cuda_runtime.h>
+#include <cuda/stream>
 
 #include <cucascade/memory/error.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <exception>
+#include <string>
 
 namespace sirius {
 namespace memory {

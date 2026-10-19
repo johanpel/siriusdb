@@ -16,28 +16,47 @@
 
 #include "op/sirius_physical_top_n.hpp"
 
+#include "cucascade/data/data_batch.hpp"
 #include "data/data_batch_utils.hpp"
 #include "duckdb/planner/expression/bound_reference_expression.hpp"
 #include "duckdb/planner/filter/dynamic_filter.hpp"
+#include "helper/logical_type.hpp"
 #include "op/cudf_sort_order.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_order.hpp"
 #include "op/sirius_physical_top_n_merge.hpp"
 #include "pipeline/sirius_meta_pipeline.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 #include "sirius/exception.hpp"
+#include "telemetry/data_batch_probe.hpp"
 #include "telemetry/nvtx.hpp"
 
 #include <cudf/concatenate.hpp>
 #include <cudf/copying.hpp>
 #include <cudf/cudf_utils.hpp>
 #include <cudf/sorting.hpp>
+#include <cudf/table/table.hpp>
+#include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
 
 #include <rmm/resource_ref.hpp>
 
+#include <cuda/stream>
+
 #include <cucascade/cudf/gpu_data_representation.hpp>
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/shared_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/planner/bound_result_modifier.hpp>
 
 #include <algorithm>
+#include <cstddef>
 #include <memory>
+#include <mutex>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

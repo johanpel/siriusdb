@@ -20,8 +20,11 @@
 #include "op/scan/metadata_walk_parallel.hpp"
 #include "scan_manager/pinned_chunk_stats.hpp"
 
+#include <duckdb/common/shared_ptr.hpp>
+#include <duckdb/common/typedefs.hpp>
 #include <duckdb/main/attached_database.hpp>
 #include <duckdb/planner/filter/expression_filter.hpp>
+#include <duckdb/planner/table_filter.hpp>
 #include <duckdb/storage/block_manager.hpp>
 #include <duckdb/storage/storage_index.hpp>
 #include <duckdb/storage/storage_manager.hpp>
@@ -32,7 +35,11 @@
 #include <duckdb/transaction/local_storage.hpp>
 
 #include <algorithm>
+#include <cstdint>
 #include <cstdlib>
+#include <memory>
+#include <mutex>
+#include <optional>
 #include <span>
 #include <string_view>
 #include <utility>

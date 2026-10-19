@@ -16,18 +16,31 @@
 
 #include "op/sirius_physical_streaming_sink.hpp"
 
+#include "cucascade/data/data_repository.hpp"
 #include "data/data_batch_utils.hpp"
+#include "exec/batch_stream.hpp"
+#include "helper/logical_type.hpp"
 #include "op/partition/gpu_partition_impl.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "pipeline/sirius_meta_pipeline.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 #include "sirius/exception.hpp"
+#include "telemetry/data_batch_probe.hpp"
+
+#include <cuda/stream>
 
 #include <cucascade/data/data_batch.hpp>
+#include <duckdb/common/vector.hpp>
 
+#include <cstddef>
 #include <exception>
+#include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace sirius::op {
 

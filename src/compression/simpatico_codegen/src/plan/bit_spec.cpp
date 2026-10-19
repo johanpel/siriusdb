@@ -5,7 +5,16 @@
 
 #include "codegen/plan/bit_spec.hpp"
 
+#include <cudf/types.hpp>
+
 #include <cctype>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 namespace simpatico {
 

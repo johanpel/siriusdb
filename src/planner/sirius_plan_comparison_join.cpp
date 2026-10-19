@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+#include "cucascade/memory/common.hpp"
+#include "cudf/cudf_utils.hpp"
 #include "duckdb/catalog/catalog_entry/table_catalog_entry.hpp"
 #include "duckdb/execution/operator/join/physical_nested_loop_join.hpp"
 #include "duckdb/main/client_context.hpp"
 #include "duckdb/main/settings.hpp"
 #include "duckdb/parser/constraints/unique_constraint.hpp"
-#include "duckdb/planner/expression/bound_cast_expression.hpp"
 #include "duckdb/planner/expression/bound_conjunction_expression.hpp"
 #include "duckdb/planner/expression/bound_reference_expression.hpp"
 #include "duckdb/planner/operator/logical_aggregate.hpp"
@@ -34,28 +35,47 @@
 #include "expression/ast/node.hpp"
 #include "expression/ast/reference.hpp"
 #include "expression/join_condition.hpp"
-#include "expression_evaluator/ast_supported_types.hpp"
 #include "helper/type_conversions.hpp"
 #include "log/logging.hpp"
+#include "op/dynamic_filter/dynamic_filter_publish_plan.hpp"
+#include "op/dynamic_filter/dynamic_filter_replica_space.hpp"
 #include "op/dynamic_filter/sirius_dynamic_filter.hpp"
+#include "op/scan/dynamic_filter_merge.hpp"
 #include "op/scan/sirius_physical_dynamic_filter.hpp"
 #include "op/sirius_physical_filter.hpp"
 #include "op/sirius_physical_hash_join.hpp"
 #include "op/sirius_physical_nested_loop_join.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_table_scan.hpp"
 #include "planner/dynamic_filter/build_filter_evidence.hpp"
 #include "planner/dynamic_filter/build_key_domain.hpp"
 #include "planner/dynamic_filter/dynamic_filter_key_admission.hpp"
 #include "planner/dynamic_filter/dynamic_filter_target_discovery.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
-#include "planner/sirius_plan_projection_utils.hpp"
 #include "sirius_context.hpp"
 
+#include <cudf/types.hpp>
+
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/enums/join_type.hpp>
+#include <duckdb/common/enums/logical_operator_type.hpp>
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/projection_index.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/parser/constraint.hpp>
+
 #include <algorithm>
+#include <cstddef>
 #include <memory>
 #include <optional>
 #include <stdexcept>
 #include <unordered_map>
+#include <unordered_set>
+#include <utility>
 #include <vector>
 
 namespace sirius::planner {

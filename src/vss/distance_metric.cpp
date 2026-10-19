@@ -16,8 +16,11 @@
 
 #include "vss/distance_metric.hpp"
 
+#include <cuvs/distance/distance.hpp>
+
 #include <stdexcept>
 #include <string>
+#include <string_view>
 
 namespace sirius::vss {
 

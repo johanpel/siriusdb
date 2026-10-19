@@ -17,18 +17,27 @@
 #include "planner/sirius_plan_compressed_schema.hpp"
 
 #include "duckdb/common/assert.hpp"
+#include "expression/ast/cast.hpp"
 #include "expression/ast/node.hpp"
 #include "expression/ast/utils.hpp"
-#include "op/dynamic_filter/sirius_dynamic_filter.hpp"
 #include "op/sirius_physical_delim_join.hpp"
 #include "op/sirius_physical_dense_count_join.hpp"
 #include "op/sirius_physical_filter.hpp"
 #include "op/sirius_physical_grouped_aggregate.hpp"
 #include "op/sirius_physical_hash_join.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_projection.hpp"
 #include "op/sirius_physical_table_scan.hpp"
 
+#include <cudf/aggregation.hpp>
 #include <cudf/cudf_utils.hpp>
+#include <cudf/types.hpp>
+
+#include <duckdb/common/enums/join_type.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
 
 #include <algorithm>
 #include <cstddef>
@@ -38,6 +47,7 @@
 #include <ranges>
 #include <unordered_set>
 #include <utility>
+#include <variant>
 #include <vector>
 
 namespace sirius::planner {

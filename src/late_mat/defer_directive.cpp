@@ -17,9 +17,16 @@
 #include "late_mat/defer_directive.hpp"
 
 #include "helper/numeric_narrowing.hpp"
+#include "late_mat/column_origin.hpp"
+
+#include <cudf/types.hpp>
 
 #include <algorithm>
 #include <atomic>
+#include <cstddef>
+#include <cstdint>
+#include <utility>
+#include <vector>
 
 namespace sirius::late_mat {
 

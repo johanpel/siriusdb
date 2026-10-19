@@ -16,13 +16,21 @@
 
 #include "planner/query_index.hpp"
 
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "pipeline/sirius_pipeline.hpp"
 #include "planner/query.hpp"
 
 #include <algorithm>
+#include <cstddef>
 #include <limits>
+#include <memory>
 #include <string_view>
+#include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <variant>
+#include <vector>
 
 namespace sirius::planner {
 

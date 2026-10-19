@@ -16,9 +16,18 @@
 
 #include "exec/streaming_fragment.hpp"
 
+#include "cucascade/data/data_batch.hpp"
+#include "cucascade/data/data_repository.hpp"
+#include "cucascade/memory/common.hpp"
 #include "data/data_batch_utils.hpp"
+#include "exec/batch_stream.hpp"
+#include "exec/stream_bind_catalog.hpp"
+#include "exec/stream_session.hpp"
+#include "helper/logical_type.hpp"
 #include "helper/type_conversions.hpp"
+#include "op/sirius_physical_operator.hpp"
 #include "op/sirius_physical_result_collector.hpp"
+#include "op/sirius_physical_streaming_sink.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
 #include "sirius/exception.hpp"
 #include "sirius_context.hpp"
@@ -27,14 +36,23 @@
 
 #include <cudf/types.hpp>
 
+#include <duckdb/common/enums/statement_type.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/shared_ptr.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
 #include <duckdb/main/query_result.hpp>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
 #include <memory>
 #include <optional>
 #include <string>
-#include <string_view>
 #include <utility>
+#include <vector>
 
 namespace sirius::exec {
 

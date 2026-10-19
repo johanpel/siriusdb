@@ -16,8 +16,11 @@
 
 #include "pin_table.hpp"
 
+#include "codegen/util/stream_pool.hpp"
 #include "compression/compressed_representation.hpp"
 #include "compression/device_compressed_blob.hpp"
+#include "cucascade/error.hpp"
+#include "cuda_runtime_api.h"
 #include "cudf/cudf_utils.hpp"
 #include "data/sirius_converter_registry.hpp"
 #include "helper/numeric_narrowing.hpp"
@@ -31,12 +34,16 @@
 #include "scan_manager/round_robin_strategy.hpp"
 #include "telemetry/nvtx.hpp"
 
+#include <cudf/column/column_view.hpp>
 #include <cudf/table/table.hpp>
-#include <cudf/utilities/traits.hpp>
+#include <cudf/types.hpp>
+#include <cudf/utilities/type_dispatcher.hpp>
 
+#include <rmm/aligned.hpp>
 #include <rmm/cuda_device.hpp>
 #include <rmm/device_buffer.hpp>
 #include <rmm/mr/per_device_resource.hpp>
+#include <rmm/resource_ref.hpp>
 
 #include <cuda/stream>
 #include <cuda_runtime.h>
@@ -47,14 +54,22 @@
 #include <cucascade/cudf/host_data_representation.hpp>
 #include <cucascade/memory/common.hpp>
 #include <cucascade/memory/memory_space.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/storage/statistics/base_statistics.hpp>
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
+#include <exception>
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <span>
 #include <stdexcept>
+#include <string>
 #include <string_view>
 #include <unordered_map>
 #include <utility>

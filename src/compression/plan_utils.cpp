@@ -18,6 +18,11 @@
 
 #include <api/simpatico_codegen.hpp>
 
+#include <cstddef>
+#include <optional>
+#include <string>
+#include <vector>
+
 namespace sirius::compression {
 
 std::optional<std::string> select_plan_blocks(const std::string& full_plan_dsl,

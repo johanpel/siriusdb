@@ -19,16 +19,31 @@
 #include "duckdb/main/prepared_statement_data.hpp"
 #include "duckdb/main/query_result.hpp"
 #include "duckdb/main/settings.hpp"
-#include "log/logging.hpp"
 #include "op/scan/sirius_gpu_scan_operator.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "op/sirius_physical_result_collector.hpp"
 #include "op/sirius_physical_streaming_source.hpp"
+#include "query_id.hpp"
 #include "sirius_context.hpp"
 #include "transparent/read_view_registry.hpp"
 
 #include <absl/cleanup/cleanup.h>
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/error_data.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/identifier.hpp>
+#include <duckdb/common/shared_ptr.hpp>
+#include <duckdb/common/string.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/planner/expression/bound_parameter_data.hpp>
 
+#include <exception>
+#include <memory>
 #include <optional>
 #include <stdexcept>
+#include <string>
+#include <utility>
 
 namespace sirius {
 namespace {

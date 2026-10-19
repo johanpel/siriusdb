@@ -15,14 +15,26 @@
  */
 
 // sirius
+#include "helper/logical_type.hpp"
+#include "op/dynamic_filter/sirius_dynamic_filter.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+
+#include <cuda/stream>
+
 #include <data/data_batch_utils.hpp>
+#include <duckdb/common/vector.hpp>
 #include <op/scan/dynamic_filter_merge.hpp>
 #include <op/scan/sirius_physical_dynamic_filter.hpp>
 #include <telemetry/nvtx.hpp>
 
 // cucascade
-#include <cucascade/cudf/gpu_data_representation.hpp>
 #include <cucascade/data/data_batch.hpp>
+
+#include <cstddef>
+#include <memory>
+#include <utility>
+#include <vector>
 
 namespace sirius::op::scan {
 

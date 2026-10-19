@@ -23,17 +23,18 @@
 //     build. A post-join caller is precisely the one whose ordering the decode
 //     cannot verify for itself, so the check has to be here.
 
+#include "codegen/jit/fused_tree.hpp"
 #include "codegen/selection/chunk_row_set.hpp"
+#include "cuda_runtime_api.h"
 
 #include <rmm/mr/per_device_resource.hpp>
 
-#include <cuda/stream>
 #include <cuda_runtime.h>
 
 #include <algorithm>
 #include <cstdint>
 #include <cstdio>
-#include <stdexcept>
+#include <exception>
 #include <vector>
 
 using sirius::codegen::build_chunk_row_set;

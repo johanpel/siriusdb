@@ -16,9 +16,11 @@
 
 #include "vss/vector_search.hpp"
 
+#include "cucascade/memory/common.hpp"
 #include "cudf/cudf_utils.hpp"
 #include "data/sirius_converter_registry.hpp"
 #include "duckdb/common/exception.hpp"
+#include "helper/logical_type.hpp"
 #include "helper/numeric_narrowing.hpp"
 #include "scan_manager/sirius_scan_manager.hpp"
 #include "sirius_context.hpp"
@@ -31,14 +33,23 @@
 #include <rmm/cuda_device.hpp>
 #include <rmm/cuda_stream.hpp>
 #include <rmm/device_buffer.hpp>
+#include <rmm/resource_ref.hpp>
 
+#include <cuda/stream>
 #include <cuda_runtime_api.h>
 
 #include <cucascade/cudf/gpu_data_representation.hpp>
 #include <cucascade/cudf/host_data_representation.hpp>
 #include <cucascade/memory/memory_space.hpp>
+#include <duckdb/common/vector.hpp>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace sirius::vss {
 

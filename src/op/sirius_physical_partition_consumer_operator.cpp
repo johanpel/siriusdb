@@ -16,7 +16,17 @@
 
 #include "op/sirius_physical_partition_consumer_operator.hpp"
 
+#include "cucascade/data/data_batch.hpp"
+#include "op/partition_placement.hpp"
 #include "sirius/exception.hpp"
+
+#include <atomic>
+#include <cstddef>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <utility>
 
 namespace sirius {
 namespace op {

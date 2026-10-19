@@ -16,6 +16,14 @@
 
 #include "io/kvikio/kvikio_context.hpp"
 
+#include "cuda_runtime_api.h"
+#include "exec/semi_future.hpp"
+#include "io/kvikio/config.hpp"
+#include "io/object_store_config.hpp"
+#include "io/types.hpp"
+
+#include <cudf/io/text/byte_range_info.hpp>
+
 #include <kvikio/defaults.hpp>
 #include <kvikio/remote_handle.hpp>
 
@@ -23,16 +31,19 @@
 
 #include <cuda_runtime.h>
 
+#include <unistd.h>
+
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
-#include <exception>
 #include <memory>
 #include <optional>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <string_view>
 #include <utility>
+#include <vector>
 
 namespace sirius::io {
 

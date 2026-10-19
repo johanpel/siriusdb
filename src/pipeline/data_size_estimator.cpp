@@ -17,11 +17,14 @@
 #include "pipeline/data_size_estimator.hpp"
 
 #include "op/sirius_physical_operator.hpp"
+#include "pipeline/pipeline_memory_history.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <optional>
+#include <string_view>
 #include <vector>
 
 namespace sirius {

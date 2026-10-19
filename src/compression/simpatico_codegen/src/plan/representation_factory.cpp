@@ -10,24 +10,36 @@
 // ``bitextract_<spec>`` prefix) to the matching subclass factory. Every place
 // that has raw stored channels and needs a typed rep funnels through here.
 
+#include "codegen/plan/bit_spec.hpp"
+#include "codegen/plan/leaf_desc.hpp"
 #include "codegen/plan/operator_registry.hpp"
 #include "codegen/plan/plan_interpreter.hpp"
 #include "codegen/plan/representation.hpp"
+#include "cuda_runtime_api.h"
 
+#include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
-#include <cudf/copying.hpp>
 #include <cudf/dictionary/dictionary_factories.hpp>
 #include <cudf/null_mask.hpp>
+#include <cudf/types.hpp>
+#include <cudf/utilities/traits.hpp>
+#include <cudf/version_config.hpp>
 
 #include <rmm/device_buffer.hpp>
 #include <rmm/resource_ref.hpp>
 
+#include <cuda/stream>
 #include <cuda_runtime.h>
 
+#include <cstddef>
 #include <cstdint>
 #include <initializer_list>
 #include <memory>
+#include <stdexcept>
 #include <string>
+#include <string_view>
+#include <utility>
+#include <variant>
 #include <vector>
 
 namespace simpatico {

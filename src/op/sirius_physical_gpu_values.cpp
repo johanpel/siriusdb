@@ -16,33 +16,50 @@
 
 #include "op/sirius_physical_gpu_values.hpp"
 
+#include "cucascade/data/data_batch.hpp"
+#include "cuda_runtime_api.h"
 #include "cudf/cudf_utils.hpp"
 #include "data/data_batch_utils.hpp"
+#include "helper/logical_type.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "telemetry/nvtx.hpp"
 
 #include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
 #include <cudf/null_mask.hpp>
 #include <cudf/table/table.hpp>
+#include <cudf/types.hpp>
 #include <cudf/utilities/error.hpp>
 
 #include <rmm/device_buffer.hpp>
 #include <rmm/resource_ref.hpp>
 
 #include <cuda/stream>
+#include <cuda_runtime_api.h>
 
 #include <cucascade/memory/memory_space.hpp>
+#include <duckdb/common/optionally_owned_ptr.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types/column/column_data_collection.hpp>
+#include <duckdb/common/types/column/column_data_scan_states.hpp>
 #include <duckdb/common/types/data_chunk.hpp>
+#include <duckdb/common/types/string_type.hpp>
 #include <duckdb/common/types/validity_mask.hpp>
 #include <duckdb/common/types/vector.hpp>
-#include <duckdb/common/vector/array_vector.hpp>
+#include <duckdb/common/vector.hpp>
 #include <duckdb/common/vector/flat_vector.hpp>
-#include <duckdb/common/vector/struct_vector.hpp>
 
 #include <algorithm>
+#include <atomic>
+#include <cstdint>
 #include <cstring>
 #include <limits>
+#include <memory>
+#include <optional>
 #include <stdexcept>
+#include <string>
+#include <utility>
 #include <vector>
 
 namespace sirius::op {

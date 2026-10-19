@@ -17,20 +17,22 @@
 
 #include "api/compressed_table_io.hpp"
 #include "api/simpatico_codegen.hpp"
-#include "codegen/plan/plan_interpreter.hpp"  // fused_leaf_builder, render_plan_tree
+#include "codegen/plan/plan_tree.hpp"
+#include "codegen/plan/representation.hpp"
 #include "codegen/util/stream_pool.hpp"
+#include "cuda_runtime_api.h"
 #include "explore/compression_explorer.hpp"
 
 #include <cudf/column/column_factories.hpp>
 #include <cudf/io/csv.hpp>
 #include <cudf/io/parquet.hpp>
+#include <cudf/io/types.hpp>
 #include <cudf/strings/strings_column_view.hpp>
 #include <cudf/table/table.hpp>
 #include <cudf/table/table_view.hpp>
 #include <cudf/types.hpp>
 #include <cudf/utilities/default_stream.hpp>
 #include <cudf/utilities/memory_resource.hpp>
-#include <cudf/utilities/traits.hpp>
 
 #include <rmm/cuda_stream.hpp>
 #include <rmm/mr/cuda_async_memory_resource.hpp>
@@ -41,19 +43,20 @@
 #include <cuda_runtime.h>
 
 #include <algorithm>
+#include <cctype>
 #include <chrono>
-#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <exception>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <memory>
-#include <numeric>
 #include <optional>
 #include <ostream>
+#include <ratio>
 #include <sstream>
 #include <stdexcept>
 #include <string>

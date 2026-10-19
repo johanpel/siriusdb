@@ -1,11 +1,15 @@
 #include "codegen/plan/operator_registry.hpp"
 #include "codegen/plan/plan_tree.hpp"
 
+#include <cudf/types.hpp>
+
 #include <cstdint>
 #include <cstdio>
+#include <exception>
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace {

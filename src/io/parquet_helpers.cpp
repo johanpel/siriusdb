@@ -16,10 +16,16 @@
 
 #include "io/parquet_helpers.hpp"
 
+#include <cudf/io/parquet_schema.hpp>
+
+#include <duckdb/common/types.hpp>
+
 #include <cstddef>
+#include <cstdint>
+#include <span>
 #include <stdexcept>
-#include <string>
 #include <utility>
+#include <vector>
 
 namespace sirius::io::parquet_helpers {
 

@@ -17,12 +17,16 @@
 #include "data/data_batch_utils.hpp"
 
 #include "compression/compressed_representation.hpp"
+#include "cucascade/data/common.hpp"
+#include "cucascade/data/data_batch.hpp"
 
 #include <cucascade/cudf/gpu_data_representation.hpp>
 #include <cucascade/cudf/host_data_representation.hpp>
 #include <cucascade/data/disk_data_representation.hpp>
 #include <cucascade/memory/column_metadata.hpp>
 
+#include <cstddef>
+#include <optional>
 #include <vector>
 
 namespace sirius {

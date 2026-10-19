@@ -15,11 +15,19 @@
  */
 
 // clang-format off
-#include <variant>
+#include <memory>
+#include <optional>
 #include "expression_evaluator/regex/regex_playground.hpp"
+#include <cuda/stream>
 // clang-format on
 
+#include <cudf/column/column.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/cudf_utils.hpp>
+#include <cudf/transform.hpp>
+#include <cudf/types.hpp>
+
+#include <rmm/resource_ref.hpp>
 
 namespace sirius {
 namespace regex {

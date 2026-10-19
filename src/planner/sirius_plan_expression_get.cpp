@@ -17,12 +17,22 @@
 #include "duckdb/common/types/column/column_data_collection.hpp"
 #include "duckdb/execution/expression_executor.hpp"
 #include "duckdb/execution/physical_plan_generator.hpp"
-#include "duckdb/planner/expression/bound_constant_expression.hpp"
 #include "duckdb/planner/operator/logical_expression_get.hpp"
 #include "helper/type_conversions.hpp"
 #include "log/logging.hpp"
 #include "op/sirius_physical_column_data_scan.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
+
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/types/column/column_data_scan_states.hpp>
+#include <duckdb/common/types/data_chunk.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+
+#include <cstddef>
+#include <utility>
 
 namespace sirius::planner {
 

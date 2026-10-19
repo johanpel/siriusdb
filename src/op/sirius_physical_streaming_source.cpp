@@ -17,13 +17,26 @@
 #include "op/sirius_physical_streaming_source.hpp"
 
 #include "creator/task_creator.hpp"
+#include "cucascade/data/data_repository.hpp"
+#include "exec/batch_stream.hpp"
+#include "helper/logical_type.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 #include "sirius/exception.hpp"
 #include "transparent/read_view_registry.hpp"
 
-#include <cucascade/data/data_batch.hpp>
+#include <cuda/stream>
 
+#include <cucascade/data/data_batch.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <cstddef>
+#include <exception>
 #include <memory>
+#include <optional>
+#include <set>
 #include <utility>
 #include <vector>
 

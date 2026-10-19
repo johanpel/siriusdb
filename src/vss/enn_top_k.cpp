@@ -19,21 +19,25 @@
 #include "vss/brute_force_search.hpp"
 #include "vss/cudf_raft_interop.hpp"
 #include "vss/distance_metric.hpp"
+#include "vss/vector_search_internal.hpp"
 
 #include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
 #include <cudf/copying.hpp>
 #include <cudf/cudf_utils.hpp>
 #include <cudf/merge.hpp>
-#include <cudf/stream_compaction.hpp>
 #include <cudf/types.hpp>
 #include <cudf/unary.hpp>
 
 #include <raft/core/device_mdspan.hpp>
+#include <raft/core/device_resources.hpp>
+#include <raft/core/mdspan_types.hpp>
 
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <utility>
 #include <vector>
 
 namespace sirius::vss {

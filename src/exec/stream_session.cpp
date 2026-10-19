@@ -16,11 +16,20 @@
 
 #include "exec/stream_session.hpp"
 
+#include "cucascade/data/data_batch.hpp"
+#include "exec/batch_stream.hpp"
+#include "op/sirius_physical_streaming_sink.hpp"
+#include "op/sirius_physical_streaming_source.hpp"
 #include "sirius/exception.hpp"
 
+#include <cstddef>
+#include <exception>
+#include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace sirius::exec {
 

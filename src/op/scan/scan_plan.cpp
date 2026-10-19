@@ -15,6 +15,16 @@
  */
 
 // sirius
+#include "helper/logical_type.hpp"
+#include "op/scan/owning_table_view.hpp"
+
+#include <cuda/stream>
+
+#include <duckdb/common/column_index.hpp>
+#include <duckdb/common/constants.hpp>
+#include <duckdb/common/multi_file/multi_file_data.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/vector.hpp>
 #include <helper/type_conversions.hpp>
 #include <log/logging.hpp>
 #include <op/scan/scan_plan.hpp>
@@ -25,14 +35,27 @@
 #include <duckdb/common/multi_file/multi_file_reader.hpp>
 
 // cudf
+#include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
 #include <cudf/cudf_utils.hpp>
 #include <cudf/filling.hpp>
 #include <cudf/scalar/scalar.hpp>
+#include <cudf/table/table.hpp>
+#include <cudf/types.hpp>
+
+#include <rmm/resource_ref.hpp>
 
 // standard library
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <string>
 #include <unordered_map>
+#include <unordered_set>
+#include <utility>
+#include <vector>
 
 namespace sirius::op::scan {
 

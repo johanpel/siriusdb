@@ -16,19 +16,31 @@
 
 #include "pipeline/sirius_pipeline.hpp"
 
-#include "config.hpp"
+#include "common/optional_ptr.hpp"
 #include "creator/task_creator.hpp"
-#include "duckdb/main/client_context.hpp"
-#include "duckdb/main/settings.hpp"
-#include "duckdb/parallel/task_scheduler.hpp"
+#include "helper/types.hpp"
 #include "log/logging.hpp"
 #include "op/sirius_physical_delim_join.hpp"
-#include "op/sirius_physical_grouped_aggregate.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "pipeline/completion_handler.hpp"
+#include "pipeline/pipeline_build_context.hpp"
 #include "pipeline/sirius_meta_pipeline.hpp"
 #include "sirius/exception.hpp"
 #include "telemetry/nvtx.hpp"
 
+#include <nvtx3/nvtx3.hpp>
+
+#include <duckdb/common/assert.hpp>
+
+#include <algorithm>
+#include <cstddef>
+#include <exception>
 #include <format>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace pipeline {

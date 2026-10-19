@@ -18,8 +18,11 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
-#include <stdexcept>
+#include <cstddef>
+#include <optional>
+#include <span>
+#include <utility>
+#include <vector>
 
 namespace sirius::op::scan {
 

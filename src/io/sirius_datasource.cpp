@@ -16,22 +16,29 @@
 
 #include "io/sirius_datasource.hpp"
 
-#include "exec/semi_future.hpp"
+#include "exec/invocable.hpp"
 #include "exec/try.hpp"
 #include "io/cache/prefetching_cache.hpp"
+#include "io/cache/types.hpp"
+#include "io/types.hpp"
+
+#include <cudf/io/datasource.hpp>
+#include <cudf/io/text/byte_range_info.hpp>
 
 #include <rmm/device_buffer.hpp>
 
-#include <fcntl.h>
+#include <cuda/stream>
+
 #include <log/logging.hpp>
-#include <sys/stat.h>
 
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <exception>
 #include <future>
 #include <memory>
-#include <stdexcept>
+#include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 

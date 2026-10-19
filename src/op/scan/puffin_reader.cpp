@@ -18,11 +18,13 @@
 
 #include "op/scan/iceberg_delete_set.hpp"
 
-#include <io/uri_parser.hpp>
 #include <log/logging.hpp>
 
 // Vendored by DuckDB core and already on this target's include path; duckdb_static bundles its
 // objects, so reading the Puffin footer costs no new dependency.
+#include "op/scan/table_scan/scan_contract.hpp"
+#include "scan_manager/preparation_ledger.hpp"
+#include "transparent/replay_admission.hpp"
 #include "yyjson.hpp"
 
 // CRoaring: the portable-Roaring reader. The legacy path uses the same two calls as
@@ -36,11 +38,14 @@
 #include <cstdint>
 #include <cstring>
 #include <fstream>
+#include <ios>
 #include <memory>
 #include <mutex>
 #include <span>
 #include <stdexcept>
 #include <string>
+#include <string_view>
+#include <utility>
 #include <vector>
 
 // The readers below memcpy into the target type, so a big-endian host would decode garbage.

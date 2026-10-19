@@ -16,6 +16,8 @@
 
 #include "op/sirius_physical_operator_type.hpp"
 
+#include <string>
+
 namespace sirius::op {
 
 // LCOV_EXCL_START

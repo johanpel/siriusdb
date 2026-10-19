@@ -16,34 +16,55 @@
 
 #include "op/aggregate/gpu_aggregate_impl.hpp"
 
+#include "cucascade/data/data_batch.hpp"
+#include "cucascade/memory/memory_space.hpp"
+#include "cudf/cudf_utils.hpp"
 #include "data/data_batch_utils.hpp"
 #include "log/logging.hpp"
 #include "op/aggregate/aggregate_op_util.hpp"
 #include "op/aggregate/group_key_labels.hpp"
 #include "op/aggregate/stddev.hpp"
+#include "telemetry/data_batch_probe.hpp"
 
+#include <cudf/aggregation.hpp>
+#include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
 #include <cudf/concatenate.hpp>
 #include <cudf/copying.hpp>
 #include <cudf/dictionary/dictionary_column_view.hpp>
 #include <cudf/dictionary/encode.hpp>
+#include <cudf/groupby.hpp>
 #include <cudf/lists/lists_column_view.hpp>
 #include <cudf/null_mask.hpp>
+#include <cudf/reduction.hpp>
 #include <cudf/reduction/approx_distinct_count.hpp>
 #include <cudf/sorting.hpp>
 #include <cudf/strings/strings_column_view.hpp>
-#include <cudf/transform.hpp>
+#include <cudf/table/table.hpp>
+#include <cudf/types.hpp>
 #include <cudf/unary.hpp>
 #include <cudf/utilities/error.hpp>
 #include <cudf/utilities/traits.hpp>
 
 #include <rmm/error.hpp>
 
+#include <cuda/stream>
+
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
+#include <memory>
 #include <new>
 #include <numeric>
 #include <optional>
+#include <set>
+#include <stdexcept>
+#include <string>
+#include <unordered_map>
 #include <unordered_set>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

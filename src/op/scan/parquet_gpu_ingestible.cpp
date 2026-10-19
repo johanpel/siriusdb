@@ -17,9 +17,33 @@
 #include "op/scan/parquet_gpu_ingestible.hpp"
 
 // sirius
+#include "expression_evaluator/like_multiliteral.hpp"
+#include "expression_evaluator/query_policy.hpp"
+#include "helper/logical_type.hpp"
+#include "op/scan/batch_coalescer.hpp"
 #include "op/scan/gpu_ingestible_types.hpp"
 #include "op/scan/owning_table_view.hpp"
+#include "op/scan/row_group_metadata.hpp"
+#include "op/scan/scan_filter_analysis.hpp"
+#include "op/scan/scan_plan.hpp"
+#include "op/scan/table_scan/bound_read_view.hpp"
+#include "op/scan/table_scan/parquet_physical_profile.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
+#include "sirius/exception.hpp"
+#include "transparent/replay_admission.hpp"
 
+#include <cuda/stream>
+
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/column_index.hpp>
+#include <duckdb/common/constants.hpp>
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/planner/table_filter_set.hpp>
 #include <expression/ast/from_duckdb.hpp>
 #include <expression_evaluator/expression_evaluator.hpp>
 #include <expression_evaluator/gpu_expression_translator_internal.hpp>
@@ -41,26 +65,28 @@
 #include <transparent/read_view_registry.hpp>
 
 // cudf
+#include <cudf/ast/expressions.hpp>
+#include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
 #include <cudf/concatenate.hpp>
 #include <cudf/io/datasource.hpp>
 #include <cudf/io/parquet.hpp>
-#include <cudf/io/parquet_io_utils.hpp>
 #include <cudf/io/parquet_schema.hpp>
 #include <cudf/io/text/byte_range_info.hpp>
 #include <cudf/scalar/scalar.hpp>
 #include <cudf/strings/utilities.hpp>
 #include <cudf/table/table.hpp>
+#include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
 #include <cudf/utilities/default_stream.hpp>
 #include <cudf/utilities/error.hpp>
 #include <cudf/utilities/memory_resource.hpp>
-#include <cudf/utilities/span.hpp>
 #include <cudf/version_config.hpp>
 
 #include <cuda/std/utility>
 
 // rmm
-#include <rmm/device_buffer.hpp>
+#include <rmm/resource_ref.hpp>
 
 // cucascade
 #include <cucascade/memory/memory_space.hpp>
@@ -72,28 +98,33 @@
 #include <duckdb/planner/expression/bound_operator_expression.hpp>
 #include <duckdb/planner/expression/bound_reference_expression.hpp>
 #include <duckdb/planner/expression_iterator.hpp>
-#include <duckdb/planner/filter/conjunction_filter.hpp>
 #include <duckdb/planner/filter/expression_filter.hpp>
-#include <duckdb/planner/filter/null_filter.hpp>
 
 // uring_reactor MUST be included last among sirius headers: liburing.h,
 // pulled in transitively, defines a BLOCK_SIZE macro that collides with the
 // BLOCK_SIZE static member in <blockingconcurrentqueue.h>.
-#include <io/uring/uring_reactor.hpp>
 
 // standard library
 #include <algorithm>
+#include <atomic>
 #include <cctype>
+#include <cstddef>
 #include <cstdint>
+#include <exception>
 #include <filesystem>
-#include <future>
+#include <functional>
 #include <iterator>
+#include <limits>
 #include <memory>
+#include <mutex>
 #include <new>
+#include <numeric>
 #include <optional>
 #include <set>
+#include <span>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <system_error>
 #include <unordered_map>
 #include <unordered_set>

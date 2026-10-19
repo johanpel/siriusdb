@@ -15,11 +15,19 @@
  */
 
 #include <cudf/table/table.hpp>
+#include <cudf/types.hpp>
+
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
 
 #include <op/scan/iceberg_delete_filter.hpp>
 
+#include <cstddef>
+#include <memory>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace sirius::op::scan {
 

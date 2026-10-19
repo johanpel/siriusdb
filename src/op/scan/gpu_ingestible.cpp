@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
+#include "expression_evaluator/query_policy.hpp"
+#include "io/cache/types.hpp"
+#include "op/scan/gpu_ingestible_types.hpp"
 #include "op/scan/owning_table_view.hpp"
+
+#include <cudf/types.hpp>
+
+#include <cuda/stream>
 
 #include <data/data_batch_utils.hpp>
 #include <op/scan/gpu_ingestible.hpp>
@@ -23,6 +30,7 @@
 #include <sirius/exception.hpp>
 
 #include <cstddef>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>

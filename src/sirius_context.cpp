@@ -18,32 +18,47 @@
 
 #include "config.hpp"
 #include "cucascade/memory/memory_reservation_manager.hpp"
+#include "cucascade/memory/topology_discovery.hpp"
 #include "data/sirius_converter_registry.hpp"
+#include "downgrade/downgrade_executor.hpp"
 #include "duckdb/common/helper.hpp"
-#include "duckdb/common/multi_file/multi_file_states.hpp"
 #include "duckdb/main/attached_database.hpp"
 #include "duckdb/main/client_context.hpp"
 #include "duckdb/optimizer/optimizer.hpp"
 #include "duckdb/parser/parser.hpp"
 #include "duckdb/planner/operator/logical_get.hpp"
 #include "duckdb/planner/planner.hpp"
+#include "duckdb_table_identity.hpp"
+#include "event/query_event_publisher.hpp"
 #include "exec/stream_bind_catalog.hpp"
 #include "helper/transaction_utils.hpp"
 #include "log/duckdb_sink.hpp"
+#include "log/level.hpp"
 #include "log/logging.hpp"
 #include "log/noop_sink.hpp"
+#include "log/sink.hpp"
 #include "log/spdlog_owning_sink.hpp"
 #include "memory/numa_small_pinned_mr.hpp"
 #include "memory/resource_ref_utils.hpp"
 #include "memory/sirius_memory_reservation_manager.hpp"
 #include "memory/topology_index.hpp"
-#include "op/scan/iceberg_metadata_reader.hpp"
+#include "op/scan/table_scan/bound_read_view.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "pipeline/completion_handler.hpp"
+#include "pipeline/sirius_pipeline.hpp"
+#include "planner/query.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
+#include "query_id.hpp"
+#include "scan_manager/sirius_scan_manager.hpp"
+#include "sirius_config.hpp"
 #include "sirius_sql_rewrite.hpp"
+#include "telemetry/telemetry_context.hpp"
 #include "transparent/connection_provenance.hpp"
 #include "transparent/physical_sirius_execution.hpp"
 #include "transparent/plan_source_policy.hpp"
 #include "transparent/read_view_registry.hpp"
+#include "transparent/replay_admission.hpp"
 #include "transparent/sirius_optimizer_extension.hpp"
 #include "util/duckdb_error_message.hpp"
 #include "vss/cuvs_index_cache.hpp"
@@ -54,40 +69,56 @@
 
 #include <cuda_runtime_api.h>
 
-#include <cucascade/cudf/host_data_representation.hpp>
 #include <cucascade/memory/common.hpp>
 #include <cucascade/memory/fixed_size_host_memory_resource.hpp>
 #include <cucascade/memory/reservation_aware_resource_adaptor.hpp>
 #include <cucascade/memory/small_pinned_host_memory_resource.hpp>
 #include <duckdb/common/allocator.hpp>
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/enums/merge_action_type.hpp>
+#include <duckdb/common/enums/physical_operator_type.hpp>
+#include <duckdb/common/enums/prepared_statement_mode.hpp>
+#include <duckdb/common/enums/statement_type.hpp>
+#include <duckdb/common/error_data.hpp>
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/optional_ptr.hpp>
+#include <duckdb/common/shared_ptr.hpp>
+#include <duckdb/common/unique_ptr.hpp>
 #include <duckdb/execution/operator/helper/physical_execute.hpp>
 #include <duckdb/execution/operator/helper/physical_prepare.hpp>
 #include <duckdb/execution/operator/persistent/physical_insert.hpp>
 #include <duckdb/execution/operator/persistent/physical_merge_into.hpp>
 #include <duckdb/execution/operator/persistent/physical_update.hpp>
 #include <duckdb/execution/physical_plan_generator.hpp>
+#include <duckdb/main/client_context_state.hpp>
 #include <duckdb/main/connection.hpp>
+#include <duckdb/parser/statement/insert_statement.hpp>
 #include <duckdb/transaction/meta_transaction.hpp>
-#include <io/types.hpp>
-#include <io/uring/uring_ioctx.hpp>
-#include <sys/resource.h>
+#include <stdio.h>
 #include <unistd.h>  // for isatty/fileno
 
 #include <algorithm>
+#include <atomic>
 #include <cctype>
 #include <chrono>
 #include <cstddef>
+#include <cstdint>
 #include <cstdio>   // for fprintf/fileno (fallback banner)
 #include <cstdlib>  // for std::getenv
+#include <exception>
 #include <filesystem>
+#include <functional>
 #include <memory>
+#include <mutex>
 #include <optional>
+#include <shared_mutex>
 #include <stdexcept>
 #include <string>
 #include <string_view>
 #include <thread>
+#include <unordered_map>
 #include <utility>
-#include <variant>
+#include <vector>
 
 namespace duckdb {
 

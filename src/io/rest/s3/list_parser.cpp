@@ -17,9 +17,14 @@
 #include "io/rest/s3/list_parser.hpp"
 
 #include <cctype>
+#include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <optional>
 #include <stdexcept>
+#include <string>
+#include <string_view>
+#include <utility>
 
 namespace sirius::io::rest::s3 {
 

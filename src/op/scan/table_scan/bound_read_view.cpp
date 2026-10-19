@@ -16,25 +16,39 @@
 
 #include "op/scan/table_scan/bound_read_view.hpp"
 
+#include "exec/stream_bind_catalog.hpp"
 #include "exec/stream_plan_bindings.hpp"
 #include "helper/type_conversions.hpp"
 #include "op/sirius_physical_table_scan.hpp"
 #include "planner/connector_registry.hpp"
 #include "sirius_registration.hpp"
+#include "transparent/plan_source_policy.hpp"
 
 #include <duckdb/catalog/catalog.hpp>
 #include <duckdb/catalog/catalog_entry/duck_table_entry.hpp>
-#include <duckdb/common/multi_file/multi_file_function.hpp>
+#include <duckdb/common/enums/logical_operator_type.hpp>
+#include <duckdb/common/enums/physical_operator_type.hpp>
+#include <duckdb/common/hugeint.hpp>
+#include <duckdb/common/identifier.hpp>
 #include <duckdb/common/multi_file/multi_file_list.hpp>
 #include <duckdb/common/multi_file/multi_file_reader.hpp>
 #include <duckdb/common/multi_file/multi_file_states.hpp>
 #include <duckdb/common/multi_file/table_function_multi_file.hpp>
+#include <duckdb/common/named_parameter_map.hpp>
+#include <duckdb/common/open_file_info.hpp>
 #include <duckdb/common/serializer/binary_deserializer.hpp>
 #include <duckdb/common/serializer/binary_serializer.hpp>
 #include <duckdb/common/serializer/memory_stream.hpp>
+#include <duckdb/common/serializer/serialization_traits.hpp>
+#include <duckdb/common/typedefs.hpp>
 #include <duckdb/common/types/hash.hpp>
+#include <duckdb/common/types/value.hpp>
+#include <duckdb/common/uhugeint.hpp>
+#include <duckdb/common/vector.hpp>
 #include <duckdb/execution/operator/scan/physical_table_scan.hpp>
+#include <duckdb/function/function.hpp>
 #include <duckdb/function/table/table_scan.hpp>
+#include <duckdb/function/table_function.hpp>
 #include <duckdb/planner/logical_operator.hpp>
 #include <duckdb/planner/operator/logical_get.hpp>
 #include <duckdb/storage/storage_manager.hpp>
@@ -45,15 +59,22 @@
 
 #include <algorithm>
 #include <charconv>
+#include <cstdint>
 #include <cstring>
-#include <iomanip>
 #include <limits>
+#include <memory>
 #include <numeric>
-#include <sstream>
+#include <optional>
+#include <span>
 #include <stdexcept>
+#include <string>
 #include <string_view>
+#include <system_error>
 #include <type_traits>
+#include <unordered_map>
 #include <utility>
+#include <variant>
+#include <vector>
 
 namespace sirius::op::scan {
 namespace {

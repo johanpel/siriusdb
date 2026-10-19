@@ -21,6 +21,10 @@
 #include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_result_collector.hpp"
 
+#include <absl/functional/function_ref.h>
+
+#include <vector>
+
 namespace sirius::planner {
 
 void for_each_gpu_scan(const op::sirius_physical_operator& node,

@@ -18,6 +18,8 @@
 
 #include "duckdb/planner/operator/logical_get.hpp"
 
+#include <duckdb/common/enums/logical_operator_type.hpp>
+
 namespace sirius::planner {
 
 bool build_subtree_is_filtering(duckdb::LogicalOperator const& op)

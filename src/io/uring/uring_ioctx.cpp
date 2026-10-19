@@ -16,10 +16,13 @@
 
 #include "io/uring/uring_ioctx.hpp"
 
+#include "io/templated_ioctx.hpp"
 #include "io/uring/uring_reactor.hpp"
 
+#include <cstddef>
 #include <format>
 #include <memory>
+#include <utility>
 
 namespace sirius::io::uring {
 

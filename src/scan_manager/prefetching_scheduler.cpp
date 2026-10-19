@@ -16,10 +16,16 @@
 
 #include "scan_manager/prefetching_scheduler.hpp"
 
+#include "io/cache/types.hpp"
 #include "op/sirius_physical_operator.hpp"
+#include "planner/query_index.hpp"
 
 #include <algorithm>
+#include <cstddef>
 #include <limits>
+#include <optional>
+#include <span>
+#include <vector>
 
 namespace sirius::scan_manager {
 

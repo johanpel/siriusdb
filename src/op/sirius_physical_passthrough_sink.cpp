@@ -16,9 +16,20 @@
 
 #include "op/sirius_physical_passthrough_sink.hpp"
 
+#include "helper/logical_type.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "sirius/exception.hpp"
 
+#include <cuda/stream>
 #include <nvtx3/nvtx3.hpp>
+
+#include <duckdb/common/vector.hpp>
+
+#include <cstddef>
+#include <memory>
+#include <string>
+#include <utility>
 
 namespace sirius {
 namespace op {

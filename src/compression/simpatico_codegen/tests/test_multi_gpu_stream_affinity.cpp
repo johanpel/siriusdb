@@ -6,6 +6,7 @@
 
 #include "api/simpatico_codegen.hpp"
 #include "codegen/util/stream_pool.hpp"
+#include "cuda_runtime_api.h"
 #include "test_utils.hpp"
 
 #include <cudf/table/table.hpp>
@@ -17,6 +18,7 @@
 #include <cuda_runtime.h>
 
 #include <cstdio>
+#include <exception>
 #include <stdexcept>
 #include <string>
 #include <thread>

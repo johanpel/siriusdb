@@ -16,6 +16,9 @@
 
 #include "expression/ast/from_duckdb.hpp"
 
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/types/value.hpp>
 #include <duckdb/planner/filter/expression_filter.hpp>
 
 // sirius
@@ -59,6 +62,7 @@
 
 // standard library
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <string>

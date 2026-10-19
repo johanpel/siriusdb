@@ -15,27 +15,37 @@
  */
 
 // sirius
+#include "expression_evaluator/gpu_expression_translator_internal.hpp"
+#include "helper/logical_type.hpp"
+
+#include <duckdb/common/column_index.hpp>
+#include <duckdb/common/constants.hpp>
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/planner/table_filter_set.hpp>
 #include <expression/ast/from_duckdb.hpp>
 #include <helper/type_conversions.hpp>
 #include <log/logging.hpp>
 #include <op/scan/scan_utils.hpp>
 
 // duckdb
-#include <duckdb/common/types/value.hpp>
-#include <duckdb/planner/expression/bound_comparison_expression.hpp>
 #include <duckdb/planner/expression/bound_conjunction_expression.hpp>
 #include <duckdb/planner/expression/bound_reference_expression.hpp>
 #include <duckdb/planner/expression_iterator.hpp>
-#include <duckdb/planner/filter/conjunction_filter.hpp>
-#include <duckdb/planner/filter/constant_filter.hpp>
 #include <duckdb/planner/filter/expression_filter.hpp>
-#include <duckdb/planner/filter/in_filter.hpp>
 
 // standard library
-#include <cstdint>
+#include <algorithm>
+#include <cstddef>
 #include <format>
-#include <limits>
+#include <functional>
+#include <optional>
 #include <stdexcept>
+#include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 

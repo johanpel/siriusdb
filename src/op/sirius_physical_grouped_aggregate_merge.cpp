@@ -15,22 +15,50 @@
  */
 #include "op/sirius_physical_grouped_aggregate_merge.hpp"
 
+#include "cucascade/cudf/gpu_data_representation.hpp"
+#include "cucascade/data/data_batch.hpp"
 #include "cudf/cudf_utils.hpp"
 #include "data/data_batch_utils.hpp"
-#include "duckdb/planner/expression/bound_reference_expression.hpp"
+#include "expression/ast/node.hpp"
+#include "helper/logical_type.hpp"
+#include "log/logging.hpp"
 #include "op/aggregate/aggregate_op_util.hpp"
 #include "op/aggregate/stddev.hpp"
 #include "op/merge/gpu_merge_impl.hpp"
+#include "op/partition_placement.hpp"
+#include "op/sirius_physical_grouped_aggregate.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "op/sirius_physical_partition_consumer_operator.hpp"
 #include "pipeline/sirius_meta_pipeline.hpp"
 #include "pipeline/sirius_pipeline.hpp"
+#include "telemetry/data_batch_probe.hpp"
 #include "telemetry/nvtx.hpp"
 
+#include <cudf/aggregation.hpp>
 #include <cudf/binaryop.hpp>
+#include <cudf/column/column.hpp>
 #include <cudf/lists/count_elements.hpp>
+#include <cudf/lists/lists_column_view.hpp>
+#include <cudf/types.hpp>
 #include <cudf/unary.hpp>
 
+#include <cuda/stream>
+
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/enums/tuple_data_layout_enums.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/parser/group_by_node.hpp>
+
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 #include <limits>
+#include <memory>
+#include <mutex>
+#include <stdexcept>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

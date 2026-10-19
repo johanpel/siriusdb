@@ -17,18 +17,24 @@
 #include "pipeline/task_scheduler.hpp"
 
 #include "creator/task_creator.hpp"
+#include "cucascade/memory/topology_discovery.hpp"
 #include "downgrade/downgrade_executor.hpp"
 #include "exec/config.hpp"
 #include "exec/multi_index_priority_queue.hpp"
+#include "exec/query_lifecycle_registry.hpp"
 #include "log/logging.hpp"
 #include "memory/sirius_memory_reservation_manager.hpp"
 #include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
+#include "pipeline/completion_handler.hpp"
 #include "pipeline/gpu_pipeline_executor.hpp"
 #include "pipeline/gpu_pipeline_task.hpp"
 #include "pipeline/sirius_pipeline.hpp"
 #include "pipeline/sirius_pipeline_itask.hpp"
+#include "pipeline/task_request.hpp"
 #include "pipeline/task_submission.hpp"
 #include "planner/query.hpp"
+#include "query_id.hpp"
 #include "telemetry-bridge/gen/quent.hpp"
 #include "telemetry/telemetry_context.hpp"
 
@@ -37,8 +43,10 @@
 #include <cucascade/memory/memory_space.hpp>
 
 #include <algorithm>
-#include <limits>
-#include <mutex>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
+#include <memory>
 #include <optional>
 #include <stdexcept>
 #include <string>

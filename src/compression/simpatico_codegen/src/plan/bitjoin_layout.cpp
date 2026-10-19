@@ -1,20 +1,33 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "codegen/plan/bitjoin_layout.hpp"
 
-#include "codegen/plan/bit_spec.hpp"        // parse_bitjoin_spec
+#include "codegen/plan/bit_spec.hpp"  // parse_bitjoin_spec
+#include "codegen/plan/plan_dsl.hpp"
+#include "codegen/plan/plan_tree.hpp"
 #include "codegen/plan/representation.hpp"  // launch_bitjoin_field, launch_check_truncation
+#include "cuda_runtime_api.h"
 
+#include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
+#include <cudf/column/column_view.hpp>
 #include <cudf/copying.hpp>
+#include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
 
 #include <rmm/device_buffer.hpp>
 #include <rmm/mr/per_device_resource.hpp>
 #include <rmm/resource_ref.hpp>
 
+#include <cuda_runtime_api.h>
+
 #include <algorithm>
 #include <cstdint>
 #include <cstdio>
+#include <memory>
+#include <optional>
+#include <string>
 #include <string_view>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 

@@ -17,7 +17,16 @@
 #include "duckdb/planner/operator/logical_limit.hpp"
 #include "helper/type_conversions.hpp"
 #include "op/sirius_physical_limit.hpp"
+#include "op/sirius_physical_operator.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
+
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/planner/bound_result_modifier.hpp>
+
+#include <utility>
 
 namespace sirius::planner {
 

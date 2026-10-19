@@ -17,43 +17,66 @@
 #include "planner/connector_registry.hpp"
 
 #include "exec/stream_plan_bindings.hpp"
-#include "helper/type_conversions.hpp"
+#include "helper/logical_type.hpp"
 #include "log/logging.hpp"
 #include "op/scan/duckdb_native_metadata.hpp"
 #include "op/scan/dynamic_filter_merge.hpp"
+#include "op/scan/table_scan/bound_read_view.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
 #include "op/sirius_physical_table_scan.hpp"
 #include "planner/connector_reference_cache.hpp"
 #include "planner/duckdb_host.hpp"
 #include "sirius_registration.hpp"
+#include "transparent/plan_source_policy.hpp"
 
 #include <dlfcn.h>
 #include <duckdb/catalog/catalog.hpp>
 #include <duckdb/catalog/catalog_entry/duck_table_entry.hpp>
 #include <duckdb/catalog/catalog_entry/table_function_catalog_entry.hpp>
+#include <duckdb/common/constants.hpp>
+#include <duckdb/common/enums/on_entry_not_found.hpp>
 #include <duckdb/common/file_system.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/identifier.hpp>
+#include <duckdb/common/multi_file/multi_file_data.hpp>
 #include <duckdb/common/multi_file/multi_file_reader.hpp>
 #include <duckdb/common/multi_file/multi_file_states.hpp>
 #include <duckdb/common/multi_file/table_function_multi_file.hpp>
+#include <duckdb/common/shared_ptr.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/vector.hpp>
 #include <duckdb/execution/operator/scan/physical_table_scan.hpp>
+#include <duckdb/function/function.hpp>
 #include <duckdb/function/table/table_scan.hpp>
+#include <duckdb/function/table_function.hpp>
 #include <duckdb/main/attached_database.hpp>
 #include <duckdb/main/database.hpp>
 #include <duckdb/main/extension/extension_loader.hpp>
 #include <duckdb/main/extension/external_extension_provider.hpp>
 #include <duckdb/main/extension_helper.hpp>
+#include <duckdb/main/extension_install_info.hpp>
 #include <duckdb/main/extension_manager.hpp>
 #include <duckdb/main/settings.hpp>
 #include <duckdb/planner/extension_callback.hpp>
 #include <duckdb/planner/operator/logical_get.hpp>
 #include <duckdb/storage/single_file_block_manager.hpp>
+#include <duckdb/storage/storage_info.hpp>
 #include <duckdb/storage/storage_manager.hpp>
-#include <link.h>
+#include <duckdb_static_extension.h>
 #include <parquet_extension.hpp>
 
 #include <array>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
+#include <memory>
 #include <mutex>
+#include <optional>
+#include <span>
 #include <tuple>
 #include <unordered_set>
+#include <vector>
 
 extern "C" int32_t duckdb_extension_parquet_describe(duckdb_extension_descriptor*);
 

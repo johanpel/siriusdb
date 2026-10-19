@@ -16,25 +16,36 @@
 
 #include "scan_manager/readahead_scan_manager.hpp"
 
-#include "io/sirius_datasource.hpp"
+#include "event/event.hpp"
+#include "event/query_event_subscriber.hpp"
+#include "io/cache/types.hpp"
 #include "log/logging.hpp"
 #include "op/scan/gpu_ingestible_types.hpp"
 #include "op/scan/parquet_gpu_ingestible.hpp"
 #include "op/scan/table_scan/scan_contract.hpp"
 #include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "planner/query.hpp"
 #include "planner/query_index.hpp"
+#include "query_id.hpp"
+#include "scan_manager/config.hpp"
 
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cstddef>
+#include <cstdint>
 #include <exception>
 #include <format>
 #include <memory>
+#include <mutex>
 #include <optional>
+#include <stop_token>
 #include <string>
+#include <string_view>
 #include <thread>
 #include <utility>
+#include <vector>
 
 namespace sirius::scan_manager {
 

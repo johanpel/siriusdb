@@ -15,14 +15,20 @@
  */
 
 // sirius
-#include <cudf/cudf_utils.hpp>
+#include "expression/ast/reference.hpp"
 
-#include <expression/ast/node.hpp>
+#include <cudf/ast/expressions.hpp>
+#include <cudf/cudf_utils.hpp>
+#include <cudf/types.hpp>
+#include <cudf/utilities/type_dispatcher.hpp>
+
 #include <expression_evaluator/expression_evaluator.hpp>
 #include <helper/numeric_narrowing.hpp>
 #include <sirius/exception.hpp>
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
 
 namespace sirius {
 using ast_result      = expression_evaluator::ast_result;

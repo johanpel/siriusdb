@@ -17,9 +17,17 @@
 #include "expression/ast/constant_range.hpp"
 
 #include "cudf/cudf_utils.hpp"
+#include "expression/ast/constant.hpp"
 #include "expression/ast/node.hpp"
 #include "expression/value.hpp"
+#include "helper/logical_type.hpp"
+#include "helper/numeric_narrowing.hpp"
 
+#include <cudf/types.hpp>
+
+#include <cstdint>
+#include <initializer_list>
+#include <optional>
 #include <variant>
 
 namespace sirius::ast {

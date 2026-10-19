@@ -15,7 +15,13 @@
  */
 
 // sirius
+#include <cudf/io/parquet_schema.hpp>
+
 #include <op/scan/parquet_schema_mapping.hpp>
+
+#include <cstddef>
+#include <string>
+#include <vector>
 
 namespace sirius::op::scan::detail {
 

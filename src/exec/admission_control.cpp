@@ -16,6 +16,10 @@
 
 #include <exec/admission_control.hpp>
 
+#include <cstddef>
+#include <mutex>
+#include <stop_token>
+
 namespace sirius::exec {
 
 admission_control::admission_control(size_t budget) noexcept : _budget(budget) {}

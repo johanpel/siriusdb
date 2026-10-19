@@ -22,9 +22,19 @@
 #include "op/sirius_physical_column_data_scan.hpp"
 #include "op/sirius_physical_delim_join.hpp"
 #include "op/sirius_physical_grouped_aggregate.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
 
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <cstddef>
 #include <memory>
+#include <utility>
 
 namespace sirius::planner {
 

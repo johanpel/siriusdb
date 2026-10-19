@@ -16,25 +16,32 @@
 
 #include "op/sirius_physical_projection.hpp"
 
-#include "config.hpp"
 #include "data/data_batch_utils.hpp"
+#include "expression/ast/node.hpp"
 #include "expression/ast/reference.hpp"
 #include "expression_evaluator/expression_evaluator.hpp"
-#include "log/logging.hpp"
+#include "helper/logical_type.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "sirius/exception.hpp"
 #include "telemetry/nvtx.hpp"
 
+#include <cudf/column/column_view.hpp>
 #include <cudf/cudf_utils.hpp>
+#include <cudf/table/table.hpp>
+#include <cudf/types.hpp>
+#include <cudf/utilities/memory_resource.hpp>
 
-#include <cuda_runtime.h>
+#include <cuda/stream>
 
-#include <cucascade/cudf/gpu_data_representation.hpp>
 #include <cucascade/data/data_batch.hpp>
-#include <duckdb/common/exception.hpp>
+#include <duckdb/common/vector.hpp>
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <utility>
 #include <vector>
 
 namespace sirius {

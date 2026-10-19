@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "cucascade/memory/common.hpp"
 #include "cudf/cudf_utils.hpp"
 #include "duckdb/catalog/catalog.hpp"
 #include "duckdb/catalog/catalog_entry/duck_table_entry.hpp"
@@ -30,23 +31,26 @@
 #include "duckdb/storage/block_manager.hpp"
 #include "duckdb/storage/data_table.hpp"
 #include "duckdb/storage/segment/uncompressed.hpp"
-#include "duckdb/storage/statistics/base_statistics.hpp"
 #include "duckdb/storage/statistics/string_stats.hpp"
 #include "duckdb/storage/storage_manager.hpp"
 #include "duckdb/transaction/duck_transaction.hpp"
 #include "duckdb/transaction/local_storage.hpp"
+#include "duckdb_table_identity.hpp"
+#include "event/event.hpp"
 #include "exec/stream_bind_catalog.hpp"
 #include "exec/stream_plan_bindings.hpp"
 #include "expression/ast/from_duckdb.hpp"
 #include "expression/ast/node.hpp"
 #include "helper/numeric_narrowing.hpp"
 #include "helper/type_conversions.hpp"
-#include "io/uri_parser.hpp"
 #include "log/logging.hpp"
 #include "op/scan/duckdb_mvcc_visibility.hpp"
-#include "op/scan/iceberg_metadata_connection.hpp"
 #include "op/scan/iceberg_metadata_reader.hpp"
+#include "op/scan/table_scan/bound_read_view.hpp"
+#include "op/scan/table_scan/materializer_capabilities.hpp"
+#include "op/scan/table_scan/scan_contract.hpp"
 #include "op/sirius_physical_filter.hpp"
+#include "op/sirius_physical_streaming_source.hpp"
 #include "op/sirius_physical_table_scan.hpp"
 #include "planner/connector_registry.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
@@ -55,16 +59,32 @@
 #include "sirius_context.hpp"
 #include "transparent/read_view_registry.hpp"
 
+#include <cudf/types.hpp>
+
+#include <duckdb/common/column_index.hpp>
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/exception.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/identifier.hpp>
+#include <duckdb/common/multi_file/multi_file_data.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/types.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/unordered_set.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/planner/table_filter.hpp>
+
 #include <algorithm>
 #include <chrono>
+#include <cstddef>
 #include <cstdint>
-#include <map>
+#include <exception>
 #include <memory>
 #include <numeric>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <unordered_map>
-#include <unordered_set>
 #include <utility>
 #include <vector>
 

@@ -22,6 +22,7 @@
 #include "codegen/decode/jit/renderer.hpp"
 #include "codegen/jit/fused_tree.hpp"
 
+#include <cctype>
 #include <cstdio>
 #include <map>
 #include <memory>

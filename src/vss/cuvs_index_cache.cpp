@@ -16,12 +16,23 @@
 
 #include "vss/cuvs_index_cache.hpp"
 
+#include "duckdb_table_identity.hpp"
+
+#include <rmm/cuda_stream.hpp>
+
 #include <cucascade/memory/common.hpp>
 #include <cucascade/memory/memory_reservation.hpp>
 #include <cucascade/memory/memory_reservation_manager.hpp>
+#include <cuvs/distance/distance.hpp>
 
+#include <cstddef>
+#include <memory>
+#include <mutex>
 #include <optional>
+#include <string>
+#include <string_view>
 #include <utility>
+#include <vector>
 
 namespace sirius::vss {
 

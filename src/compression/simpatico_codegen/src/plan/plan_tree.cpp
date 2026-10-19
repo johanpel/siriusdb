@@ -1,8 +1,18 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "codegen/plan/plan_tree.hpp"
 
+#include "codegen/plan/bit_spec.hpp"
+#include "codegen/plan/operator_registry.hpp"
+#include "codegen/plan/plan_dsl.hpp"
+
+#include <cstddef>
 #include <deque>
+#include <optional>
+#include <string>
+#include <string_view>
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
 namespace simpatico {
 namespace {

@@ -23,6 +23,12 @@
 #include "duckdb/storage/statistics/node_statistics.hpp"
 #include "planner/scan_column_origin.hpp"
 
+#include <duckdb/common/enums/expression_type.hpp>
+
+#include <cstddef>
+#include <optional>
+#include <vector>
+
 namespace sirius::planner {
 
 namespace detail {

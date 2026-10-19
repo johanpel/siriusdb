@@ -16,8 +16,17 @@
 
 #include "duckdb/planner/operator/logical_top_n.hpp"
 #include "helper/type_conversions.hpp"
+#include "op/sirius_physical_operator.hpp"
 #include "op/sirius_physical_top_n.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
+
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/numeric_utils.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+
+#include <cstddef>
+#include <utility>
 
 namespace sirius::planner {
 

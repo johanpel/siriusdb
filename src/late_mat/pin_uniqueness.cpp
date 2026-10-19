@@ -18,19 +18,27 @@
 
 #include "log/logging.hpp"
 
+#include <cudf/column/column_view.hpp>
 #include <cudf/concatenate.hpp>
 #include <cudf/reduction.hpp>
 #include <cudf/reduction/unique_count.hpp>
 #include <cudf/scalar/scalar.hpp>
 #include <cudf/sorting.hpp>
+#include <cudf/types.hpp>
 #include <cudf/utilities/traits.hpp>
+
+#include <cuda/stream>
 
 #include <algorithm>
 #include <cctype>
+#include <cstdint>
 #include <cstdlib>
 #include <limits>
 #include <optional>
+#include <span>
+#include <string>
 #include <string_view>
+#include <vector>
 
 namespace sirius::late_mat {
 

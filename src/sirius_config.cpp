@@ -16,23 +16,41 @@
 
 #include "sirius_config.hpp"
 
+#include "creator/config.hpp"
+#include "cucascade/memory/topology_discovery.hpp"
 #include "exec/config.hpp"
+#include "io/cache/config.hpp"
+#include "io/kvikio/config.hpp"
+#include "io/rest/config.hpp"
+#include "io/uring/config.hpp"
 #include "log/logging.hpp"
+#include "scan_manager/config.hpp"
+#include "scan_manager/preparation_options.hpp"
 #include "yaml_reader.hpp"
+
+#include <kvikio/compat_mode.hpp>
 
 #include <cuda_runtime_api.h>
 
 #include <cucascade/memory/config.hpp>
 #include <cucascade/memory/reservation_manager_configurator.hpp>
-#include <yaml-cpp/yaml.h>
+#include <yaml-cpp/node/parse.h>
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
 #include <exception>
+#include <filesystem>
+#include <iterator>
 #include <limits>
+#include <memory>
+#include <new>
 #include <optional>
 #include <stdexcept>
+#include <string>
 #include <string_view>
+#include <utility>
 #include <variant>
 #include <vector>
 

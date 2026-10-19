@@ -16,29 +16,45 @@
 
 #include "op/aggregate/aggregate_op_util.hpp"
 
+#include "cuda_runtime_api.h"
 #include "cudf/cudf_utils.hpp"
 #include "duckdb/common/assert.hpp"
 #include "expression/aggregate_id.hpp"
 #include "expression/ast/node.hpp"
+#include "helper/logical_type.hpp"
 #include "sirius/exception.hpp"
 
+#include <cudf/aggregation.hpp>
 #include <cudf/fixed_point/fixed_point.hpp>
 #include <cudf/reduction.hpp>
 #include <cudf/scalar/scalar.hpp>
+#include <cudf/table/table_view.hpp>
+#include <cudf/types.hpp>
 #include <cudf/utilities/error.hpp>
 #include <cudf/utilities/pinned_memory.hpp>
 
 #include <rmm/device_buffer.hpp>
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
+#include <cuda_runtime_api.h>
+
+#include <duckdb/common/vector.hpp>
 
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
 #include <format>
 #include <limits>
+#include <memory>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
+#include <utility>
+#include <vector>
 
 namespace sirius {
 namespace op {

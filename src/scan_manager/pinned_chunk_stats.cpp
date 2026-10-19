@@ -26,19 +26,33 @@
 #include <cudf/types.hpp>
 #include <cudf/wrappers/timestamps.hpp>
 
+#include <rmm/resource_ref.hpp>
+
+#include <cuda/stream>
+
 #include <duckdb/common/enums/expression_type.hpp>
 #include <duckdb/common/enums/filter_propagate_result.hpp>
+#include <duckdb/common/types.hpp>
 #include <duckdb/common/types/date.hpp>
 #include <duckdb/common/types/timestamp.hpp>
 #include <duckdb/common/types/value.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+#include <duckdb/planner/expression/bound_comparison_expression.hpp>
 #include <duckdb/planner/expression/bound_operator_expression.hpp>
 #include <duckdb/planner/filter/table_filter_functions.hpp>
+#include <duckdb/planner/table_filter.hpp>
+#include <duckdb/storage/statistics/base_statistics.hpp>
 #include <duckdb/storage/statistics/numeric_stats.hpp>
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
+#include <exception>
+#include <functional>
 #include <optional>
 #include <utility>
+#include <vector>
 
 namespace sirius::scan_manager {
 

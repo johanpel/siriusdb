@@ -19,9 +19,11 @@
 #include "data/data_batch_utils.hpp"
 #include "helper/numeric_narrowing.hpp"
 #include "log/logging.hpp"
+#include "op/dynamic_filter/complete_build_inventory.hpp"
 #include "op/dynamic_filter/detail/accumulated_bloom_builder.hpp"
 #include "op/dynamic_filter/detail/accumulation_failure.hpp"
 #include "op/dynamic_filter/dynamic_filter_key_domain.hpp"
+#include "op/dynamic_filter/dynamic_filter_publish_plan.hpp"
 #include "op/dynamic_filter/dynamic_filter_replica_space.hpp"
 #include "op/dynamic_filter/dynamic_filter_source_policy.hpp"
 #include "op/dynamic_filter/dynamic_filter_stats.hpp"
@@ -37,8 +39,11 @@
 
 #include <rmm/cuda_device.hpp>
 #include <rmm/error.hpp>
+#include <rmm/resource_ref.hpp>
 
+#include <cuda/stream>
 #include <cuda_runtime_api.h>
+#include <nvtx3/nvtx3.hpp>
 
 #include <absl/cleanup/cleanup.h>
 #include <cucascade/cudf/gpu_data_representation.hpp>
@@ -47,6 +52,7 @@
 #include <cucascade/memory/memory_space.hpp>
 
 #include <algorithm>
+#include <atomic>
 #include <cassert>
 #include <chrono>
 #include <concepts>
@@ -58,6 +64,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <ratio>
 #include <span>
 #include <stdexcept>
 #include <string>

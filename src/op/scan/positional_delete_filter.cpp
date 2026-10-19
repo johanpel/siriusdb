@@ -14,22 +14,31 @@
  * limitations under the License.
  */
 
+#include "op/scan/iceberg_delete_set.hpp"
+#include "op/scan/parquet_batch_layout.hpp"
+
 #include <cudf/column/column_factories.hpp>
 #include <cudf/cudf_utils.hpp>
 #include <cudf/table/table.hpp>
+#include <cudf/types.hpp>
 
 #include <rmm/detail/error.hpp>
+#include <rmm/resource_ref.hpp>
 
+#include <cuda/stream>
 #include <cuda_runtime_api.h>
 
-#include <log/logging.hpp>
 #include <op/scan/iceberg_delete_filter.hpp>
 #include <op/scan/iceberg_metadata_reader.hpp>
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
+#include <memory>
+#include <span>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace sirius::op::scan {

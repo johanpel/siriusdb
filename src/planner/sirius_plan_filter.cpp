@@ -20,14 +20,25 @@
 #include "duckdb/planner/operator/logical_filter.hpp"
 #include "expression/ast/from_duckdb.hpp"
 #include "expression/ast/node.hpp"
+#include "helper/logical_type.hpp"
 #include "helper/type_conversions.hpp"
 #include "op/sirius_physical_filter.hpp"
+#include "op/sirius_physical_operator.hpp"
 #include "planner/sirius_physical_plan_generator.hpp"
 #include "planner/sirius_plan_projection_utils.hpp"
 
 #include <cudf/types.hpp>
 
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/enums/expression_type.hpp>
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/typedefs.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+
+#include <cstddef>
 #include <memory>
+#include <utility>
 #include <vector>
 
 namespace sirius::planner {

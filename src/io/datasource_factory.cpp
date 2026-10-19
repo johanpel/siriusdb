@@ -16,17 +16,19 @@
 
 #include "io/datasource_factory.hpp"
 
+#include "cucascade/memory/common.hpp"
 #include "io/io_context.hpp"
 #include "io/kvikio/kvikio_context.hpp"
 #include "io/object_store_config.hpp"
+#include "io/rest/authorizer.hpp"
 #include "io/rest/rest_ioctx.hpp"
+#include "io/rest/rest_reactor.hpp"
 #include "io/rest/s3/sigv4_authorizer.hpp"
 #include "io/rest/s3/static_credentials.hpp"
 #include "io/uring/uring_ioctx.hpp"
+#include "io/uring/uring_reactor.hpp"
 #include "log/logging.hpp"
 #include "scan_manager/config.hpp"
-
-#include <cudf/io/datasource.hpp>
 
 #include <cucascade/memory/fixed_size_host_memory_resource.hpp>
 #include <cucascade/memory/memory_reservation_manager.hpp>
@@ -34,11 +36,17 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstddef>
+#include <cstdint>
 #include <exception>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <shared_mutex>
 #include <stdexcept>
+#include <string>
+#include <string_view>
 #include <utility>
 
 namespace sirius::io {

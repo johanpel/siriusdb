@@ -15,20 +15,28 @@
  */
 
 // sirius
+#include "expression/ast/case_expr.hpp"
+#include "expression/ast/function_call.hpp"
+
+#include <duckdb/common/assert.hpp>
 #include <expression/ast/node.hpp>
 #include <expression/function_id.hpp>
 #include <expression_evaluator/expression_evaluator.hpp>
 #include <sirius/exception.hpp>
 
 // cudf
-#include <cudf/ast/expressions.hpp>
+#include <cudf/aggregation.hpp>
+#include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
 #include <cudf/copying.hpp>
-#include <cudf/cudf_utils.hpp>
 #include <cudf/reduction.hpp>
+#include <cudf/types.hpp>
+#include <cudf/utilities/type_dispatcher.hpp>
 
 // standard library
+#include <memory>
 #include <ranges>
+#include <utility>
 
 namespace sirius {
 using evaluate_result = expression_evaluator::evaluate_result;

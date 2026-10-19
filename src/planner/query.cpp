@@ -16,9 +16,15 @@
 
 #include "planner/query.hpp"
 
+#include "op/sirius_physical_operator_type.hpp"
+#include "query_id.hpp"
+#include "telemetry-bridge/gen/quent.hpp"
 #include "telemetry/telemetry_context.hpp"
 
-#include <cstdlib>
+#include <memory>
+#include <span>
+#include <utility>
+#include <vector>
 
 namespace sirius::planner {
 

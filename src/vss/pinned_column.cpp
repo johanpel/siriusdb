@@ -19,12 +19,12 @@
 #include "scan_manager/sirius_scan_manager.hpp"
 #include "sirius/exception.hpp"
 
-#include <cudf/column/column.hpp>
 #include <cudf/column/column_view.hpp>
 
 #include <cucascade/memory/memory_space.hpp>
 
 #include <cstddef>
+#include <string>
 #include <vector>
 
 namespace sirius::vss {

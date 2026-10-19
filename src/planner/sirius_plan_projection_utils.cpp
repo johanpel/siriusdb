@@ -16,10 +16,21 @@
 
 #include "planner/sirius_plan_projection_utils.hpp"
 
+#include "expression/ast/constant.hpp"
+#include "expression/ast/node.hpp"
+#include "expression/ast/reference.hpp"
 #include "expression/ast/utils.hpp"
+#include "helper/logical_type.hpp"
+#include "op/sirius_physical_operator.hpp"
+#include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_projection.hpp"
 
+#include <duckdb/common/helper.hpp>
+#include <duckdb/common/unique_ptr.hpp>
+#include <duckdb/common/vector.hpp>
+
 #include <cstddef>
+#include <memory>
 #include <utility>
 #include <vector>
 

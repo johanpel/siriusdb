@@ -1,5 +1,10 @@
 #include "cache_identity.hpp"
 
+#include <cstddef>
+#include <cstdint>
+#include <string>
+#include <string_view>
+
 // Keep xxHash implementation and state private: no library linkage, exported
 // xxHash symbols, or heap allocation for the streaming state.
 #define XXH_INLINE_ALL

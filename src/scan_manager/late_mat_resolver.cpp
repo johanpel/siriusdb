@@ -17,11 +17,23 @@
 #include "scan_manager/late_mat_resolver.hpp"
 
 #include "compression/compressed_representation.hpp"
+#include "cucascade/memory/common.hpp"
+#include "late_mat/column_origin.hpp"
+#include "late_mat/materialize.hpp"
+#include "late_mat/prepared_selection.hpp"
+#include "pin_table.hpp"
 #include "scan_manager/sirius_scan_manager.hpp"
 
 #include <cudf/column/column.hpp>
+#include <cudf/types.hpp>
 
 #include <api/simpatico_codegen.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+#include <utility>
+#include <vector>
 
 namespace sirius::scan_manager {
 

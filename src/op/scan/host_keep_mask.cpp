@@ -16,17 +16,22 @@
 
 #include <cudf/column/column_factories.hpp>
 #include <cudf/cudf_utils.hpp>
-#include <cudf/stream_compaction.hpp>
 #include <cudf/transform.hpp>
 #include <cudf/types.hpp>
 
 #include <rmm/detail/error.hpp>
 #include <rmm/device_buffer.hpp>
+#include <rmm/resource_ref.hpp>
 
+#include <cuda/stream>
 #include <cuda_runtime_api.h>
 
 #include <op/scan/host_keep_mask.hpp>
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <span>
 #include <stdexcept>
 #include <string>
 

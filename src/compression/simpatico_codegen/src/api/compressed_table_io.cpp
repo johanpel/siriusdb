@@ -5,31 +5,39 @@
 
 #include "api/compressed_table_io.hpp"
 
+#include "api/simpatico_codegen.hpp"
+#include "codegen/plan/leaf_desc.hpp"
 #include "codegen/plan/operator_registry.hpp"
 #include "codegen/plan/plan_interpreter.hpp"
+#include "codegen/plan/plan_tree.hpp"
 #include "codegen/plan/representation.hpp"
 #include "codegen/util/nvtx.hpp"
+#include "cuda_runtime_api.h"
 
 #include <cudf/column/column.hpp>
 #include <cudf/column/column_factories.hpp>
-#include <cudf/strings/strings_column_view.hpp>
 #include <cudf/types.hpp>
 
-#include <rmm/device_buffer.hpp>
-#include <rmm/mr/per_device_resource.hpp>
+#include <rmm/resource_ref.hpp>
 
+#include <cuda/stream>
 #include <cuda_runtime.h>
 
-#include <algorithm>
 #include <array>
 #include <bit>
 #include <cstdint>
 #include <cstring>
 #include <fstream>
+#include <functional>
+#include <ios>
 #include <memory>
-#include <stdexcept>
+#include <optional>
+#include <span>
 #include <string>
+#include <string_view>
 #include <unordered_map>
+#include <utility>
+#include <variant>
 #include <vector>
 
 namespace simpatico {

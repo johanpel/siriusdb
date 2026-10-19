@@ -18,20 +18,33 @@
 
 #include "cucascade/cuda/event.hpp"
 #include "exec/thread_util.hpp"
+#include "io/cache/types.hpp"
 #include "io/details/slot_pool.hpp"
 #include "io/io_errors.hpp"
+#include "io/io_request.hpp"
+#include "io/rest/authorizer.hpp"
+#include "io/rest/config.hpp"
 #include "io/rest/curl_handle.hpp"
+#include "io/rest/types.hpp"
+#include "io/types.hpp"
 #include "io/uri_parser.hpp"
 #include "log/logging.hpp"
+
+#include <cudf/io/text/byte_range_info.hpp>
 
 #include <rmm/cuda_device.hpp>
 #include <rmm/error.hpp>
 
+#include <cuda_runtime_api.h>
+
+#include <curl/curl.h>
 #include <sys/epoll.h>
+#include <sys/timerfd.h>
+#include <sys/uio.h>
 #include <unistd.h>
 
 #include <algorithm>
-#include <array>
+#include <atomic>
 #include <cassert>
 #include <cctype>
 #include <cerrno>
@@ -39,17 +52,24 @@
 #include <cstdint>
 #include <cstring>
 #include <deque>
+#include <exception>
 #include <format>
-#include <limits>
+#include <iterator>
+#include <memory>
+#include <mutex>
 #include <new>
 #include <optional>
 #include <random>
+#include <span>
 #include <stdexcept>
+#include <stop_token>
 #include <string>
+#include <string_view>
 #include <system_error>
 #include <thread>
 #include <tuple>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace sirius::io::rest {

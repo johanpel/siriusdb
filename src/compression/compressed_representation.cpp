@@ -16,19 +16,30 @@
 
 #include "compressed_representation.hpp"
 
+#include "compression/simpatico_compressed_representation.hpp"
+#include "cucascade/data/common.hpp"
+#include "cucascade/memory/fixed_size_host_memory_resource.hpp"
+#include "cucascade/memory/memory_space.hpp"
+#include "cuda_runtime_api.h"
 #include "device_compressed_blob.hpp"
 #include "memory/size_arithmetic.hpp"
 
+#include <cuda/stream>
 #include <cuda_runtime.h>
 
 #include <cucascade/error.hpp>
 
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <cstdlib>
+#include <memory>
+#include <optional>
+#include <span>
 #include <stdexcept>
-#include <string_view>
+#include <string>
 #include <utility>
+#include <vector>
 
 namespace sirius {
 

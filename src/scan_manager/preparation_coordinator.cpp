@@ -17,11 +17,28 @@
 #include "scan_manager/preparation_coordinator.hpp"
 
 #include "duckdb/common/exception.hpp"
+#include "exec/scoped_dispatcher.hpp"
+#include "op/scan/batch_coalescer.hpp"
+#include "op/scan/gpu_ingestible_types.hpp"
+#include "pipeline/completion_handler.hpp"
+#include "scan_manager/preparation.hpp"
+#include "scan_manager/preparation_options.hpp"
 
 #include <algorithm>
+#include <chrono>
+#include <cstddef>
 #include <deque>
+#include <exception>
+#include <functional>
 #include <limits>
 #include <map>
+#include <memory>
+#include <mutex>
+#include <optional>
+#include <stdexcept>
+#include <thread>
+#include <utility>
+#include <vector>
 
 namespace sirius::scan_manager {
 struct preparation_coordinator::state {

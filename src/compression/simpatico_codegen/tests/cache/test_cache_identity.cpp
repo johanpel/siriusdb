@@ -1,13 +1,18 @@
+#include "codegen/jit/nvrtc_compiler.hpp"
 #include "jit/cache_identity.hpp"
 #include "jit/compilation_request.hpp"
 
 #include <array>
 #include <cstdio>
+#include <exception>
 #include <filesystem>
 #include <fstream>
+#include <ios>
 #include <iterator>
 #include <stdexcept>
 #include <string>
+#include <string_view>
+#include <utility>
 
 using namespace codegen::jit::detail;
 

@@ -15,8 +15,17 @@
  */
 
 // sirius
+#include "expression/ast/reference.hpp"
+#include "expression_evaluator/expression_evaluator_strategy.hpp"
+#include "expression_evaluator/like_multiliteral.hpp"
+#include "expression_evaluator/query_policy.hpp"
+#include "helper/logical_type.hpp"
+
+#include <cudf/ast/expressions.hpp>
 #include <cudf/cudf_utils.hpp>
 
+#include <duckdb/common/assert.hpp>
+#include <duckdb/common/vector.hpp>
 #include <expression/ast/aggregate.hpp>  // sirius::ast::aggregate
 #include <expression/ast/node.hpp>       // sirius::ast::node alternatives
 #include <expression_evaluator/expression_evaluator.hpp>
@@ -37,9 +46,16 @@
 #include <cuda/stream>
 
 // standard library
+#include <cstddef>
+#include <cstdint>
+#include <functional>
+#include <initializer_list>
 #include <memory>
-#include <numeric>
+#include <span>
+#include <stdexcept>
+#include <utility>
 #include <variant>
+#include <vector>
 
 namespace {
 /// Returns true if cudf::cast supports this type (fixed-width only; no STRING/LIST/STRUCT/etc.).
