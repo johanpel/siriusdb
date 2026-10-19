@@ -25,7 +25,7 @@
 #include "op/sirius_physical_operator.hpp"
 #include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_partition_consumer_operator.hpp"
-#include "pipeline/sirius_pipeline.hpp"
+#include "pipeline/sirius_pipeline.hpp"  // IWYU pragma: keep
 #include "telemetry/nvtx.hpp"
 
 #include <cuda/stream>

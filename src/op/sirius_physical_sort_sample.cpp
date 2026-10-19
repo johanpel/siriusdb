@@ -29,7 +29,7 @@
 #include "op/sirius_physical_operator.hpp"
 #include "op/sirius_physical_operator_type.hpp"
 #include "op/sirius_physical_order.hpp"
-#include "pipeline/sirius_pipeline.hpp"
+#include "pipeline/sirius_pipeline.hpp"  // IWYU pragma: keep
 #include "sirius/exception.hpp"
 #include "telemetry/nvtx.hpp"
 

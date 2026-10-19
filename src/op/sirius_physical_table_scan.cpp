@@ -22,7 +22,7 @@
 #include "expression_evaluator/expression_evaluator.hpp"
 #include "helper/logical_type.hpp"
 #include "log/logging.hpp"
-#include "op/scan/iceberg_gpu_ingestible.hpp"
+#include "op/scan/iceberg_gpu_ingestible.hpp"  // IWYU pragma: keep
 #include "op/scan/scan_utils.hpp"
 #include "op/sirius_physical_operator.hpp"
 #include "op/sirius_physical_operator_type.hpp"

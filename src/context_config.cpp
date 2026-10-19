@@ -21,7 +21,7 @@
 #include <sirius/context/config_builder.hpp>
 #include <yaml-cpp/exceptions.h>
 #include <yaml-cpp/node/parse.h>
-#include <yaml-cpp/yaml.h>
+#include <yaml-cpp/yaml.h>  // IWYU pragma: keep
 
 #include <cstddef>
 #include <expected>
