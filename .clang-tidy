@@ -70,34 +70,36 @@ CheckOptions:
  # Work around confirmed public-header recognition failures in dependencies.
  # Matching headers are exempt from both missing- and unused-include checks.
  - key:             misc-include-cleaner.IgnoreHeaders
-   value:           "cuda/stream$;\
-                     cuda/__stream/stream_ref[.]h$;\
-                     cuda/memory_resource$;\
-                     cuda/__memory_resource/any_resource[.]h$;\
-                     cuda/__memory_resource/properties[.]h$;\
-                     cuda/cmath$;\
-                     cuda/__cmath/ceil_div[.]h$;\
-                     cuda/buffer$;\
-                     cuda/__container/buffer[.]h$;\
-                     cuda/__utility/no_init[.]h$;\
-                     cuda/std/utility$;\
-                     cuda/std/__utility/pair[.]h$;\
-                     cuda_runtime[.]h$;\
-                     cuda_runtime_api[.]h$;\
-                     driver_types[.]h$;\
-                     duckdb/common/shared_ptr[.]hpp$;\
-                     duckdb/common/shared_ptr_ipp[.]hpp$;\
-                     duckdb/common/weak_ptr_ipp[.]hpp$;\
-                     curl/easy[.]h$;\
-                     curl/multi[.]h$;\
-                     curl/system[.]h$;\
-                     sys/uio[.]h$;\
-                     bits/types/struct_iovec[.]h$;\
-                     linux/types[.]h$;\
-                     asm-generic/int-ll64[.]h$;\
-                     bits/pthreadtypes[.]h$;\
-                     bits/types/struct_sched_param[.]h$;\
-                     bits/types/struct_itimerspec[.]h$;\
-                     bits/types/stack_t[.]h$;\
-                     bits/xopen_lim[.]h$"
+   value: '
+     cuda/stream$;
+     cuda/__stream/stream_ref\.h$;
+     cuda/memory_resource$;
+     cuda/__memory_resource/any_resource\.h$;
+     cuda/__memory_resource/properties\.h$;
+     cuda/cmath$;
+     cuda/__cmath/ceil_div\.h$;
+     cuda/buffer$;
+     cuda/__container/buffer\.h$;
+     cuda/__utility/no_init\.h$;
+     cuda/std/utility$;
+     cuda/std/__utility/pair\.h$;
+     cuda_runtime\.h$;
+     cuda_runtime_api\.h$;
+     driver_types\.h$;
+     duckdb/common/shared_ptr\.hpp$;
+     duckdb/common/shared_ptr_ipp\.hpp$;
+     duckdb/common/weak_ptr_ipp\.hpp$;
+     curl/easy\.h$;
+     curl/multi\.h$;
+     curl/system\.h$;
+     sys/uio\.h$;
+     bits/types/struct_iovec\.h$;
+     linux/types\.h$;
+     asm-generic/int-ll64\.h$;
+     bits/pthreadtypes\.h$;
+     bits/types/struct_sched_param\.h$;
+     bits/types/struct_itimerspec\.h$;
+     bits/types/stack_t\.h$;
+     bits/xopen_lim\.h$
+   '
 ...
